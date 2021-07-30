@@ -1,6 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.ctbeca">
-   <application
+  <uses-permission android:name="android.permission.INTERNET"/>
+  <application
         android:label="ctbeca"
         android:icon="@mipmap/ic_launcher">
         <activity
