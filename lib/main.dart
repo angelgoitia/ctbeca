@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Image(
-                    image: AssetImage("assets/axies.png"),
+                    image: AssetImage("assets/logo/logo.png"),
                     width: size.width/2,
                   ),
                   Container(
