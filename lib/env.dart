@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 //TODO: Url Api (LocalHost)
-String url = "192.168.1.110:8000";
+String url = "192.168.1.109:8000";
 
 
 //TODO: Url Api (hosting)
@@ -9,7 +9,7 @@ String url = "192.168.1.110:8000";
 
 String urlApi = "http://$url/api/auth/";
 
-Color colorPrimary = Color.fromRGBO(0,204,96,1);
+Color colorPrimary = Color.fromRGBO(6,65,49,1);
 Color colorSecondary = Color.fromRGBO(182,182,182,1);
 Color colorSecondaryOp = Color.fromRGBO(182,182,182,0.6);
 Color colorSecondaryOpacity = Color.fromRGBO(230,230,230,1);

@@ -2,23 +2,25 @@ import 'package:ctbeca/controller/globalController.dart';
 import 'package:ctbeca/env.dart';
 import 'package:ctbeca/models/player.dart';
 import 'package:ctbeca/models/user.dart';
+import 'package:ctbeca/views/admin/adminMainPage.dart';
+import 'package:ctbeca/views/player/playerMainPage.dart';
 
-import 'dart:convert';
-import 'dart:io';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'dart:io';
 
 
 class LoginController extends GetxController {  
-  String? password, emailWallet, messageError;
-  bool passwordVisible = true, statusError = false, statusPassword = false;
+  final messageError = ''.obs;
+  final passwordVisible = true.obs, statusError = false.obs, statusPassword = false.obs;
 
   @override
   void onInit() {
     super.onInit();
-    this.passwordVisible = true;
-    this.statusError = false;
+    passwordVisible.value = true;
+    statusError.value = false;
   }
 
   @override
@@ -26,7 +28,7 @@ class LoginController extends GetxController {
     super.onReady();
   }
 
-  void validarEmailWallet(String value){
+  validarEmailWallet(String value){
     value = value.trim().toLowerCase();
     // This is just a regular expression for email addresses
     String p = "[a-zA-Z0-9\+\.\_\%\-\+]{1,256}" +
@@ -38,63 +40,65 @@ class LoginController extends GetxController {
         ")+";
     RegExp regExp = new RegExp(p);
 
-    if (value.isNotEmpty &&regExp.hasMatch(value)) {
-      this.statusPassword = true;    
-    }else{
-      this.statusPassword = false;
+    if (value.isNotEmpty && regExp.hasMatch(value)) {
+      return statusPassword.value = true;    
     }
 
-    update();
+    statusPassword.value = false; 
 
   }
 
-  void formSubmit()async{
+  formSubmit(emailWallet, password)async{
     var result, response, jsonResponse;
     GlobalController().loading();
-    if(this.statusPassword){
-      print("http user");
+
+    if(this.statusPassword.value){
+
       try {
         result = await InternetAddress.lookup('google.com'); //verify network
         if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
 
-          response = await http.post(
-            Uri.parse(urlApi+"loginUser"),
+          var parameters = jsonToUrl(jsonEncode({
+              'email': emailWallet,
+              'password': password,
+            }));
+
+          response = await http.get(
+            Uri.parse(urlApi+"loginAdmin/$parameters"),
             headers:{
               'Accept': 'application/json',
               'Content-Type': 'application/json',
               'X-Requested-With': 'XMLHttpRequest',
             },
-            body: jsonEncode({
-              'email': emailWallet,
-              'password': password,
-            }),
           ); // petición api
           print(response.body);
           jsonResponse = jsonDecode(response.body);
 
           if (jsonResponse['statusCode'] == 201) {
-
+            print("entro");
+            statusError.value = false;
             SharedPreferences prefs = await SharedPreferences.getInstance();
-            var controllerGlobal = GlobalController();
             prefs.setString('access_token', jsonResponse['access_token']);
-            controllerGlobal.user = new User.fromJson(jsonResponse);
-            //TODO: ruta
+            GlobalController().user = new User.fromJson(jsonResponse);
+            GlobalController().getPlayers(jsonResponse['players']);
+            Get.off(AdminMainPage());
+
           } else if(jsonResponse['statusCode'] == 400){
 
-            statusError = true;
-            messageError = jsonResponse['message'];
+            statusError.value = true;
+            messageError.value = jsonResponse['message'];
 
           } else if(jsonResponse['message'] == 'Unauthorized'){
 
-            statusError = true;
-            messageError = "Email o contraseña incorrectos";
+            statusError.value = true;
+            messageError.value = "Email o contraseña incorrectos";
 
           }  
         }
       } on SocketException catch (_) {
-        statusError = true;
-        messageError = "Sin conexión, inténtalo de nuevo mas tarde";
-
+        statusError.value = true;
+        messageError.value = "Sin conexión, inténtalo de nuevo mas tarde";
+        
       } 
   
     }else{
@@ -119,31 +123,49 @@ class LoginController extends GetxController {
 
           if (jsonResponse['statusCode'] == 201) {
 
+            statusError.value = false;
             SharedPreferences prefs = await SharedPreferences.getInstance();
-            var controllerGlobal = GlobalController();
             prefs.setString('access_token', jsonResponse['access_token']);
-            controllerGlobal.player = new Player.fromJson(jsonResponse);
-            //TODO: ruta
+            GlobalController().user = new User.fromJson(jsonResponse);
+            GlobalController().player = new Player.fromJson(jsonResponse['players']);
+            Get.back();
+            Get.off(PlayerMainPage());
+            
           } else if(jsonResponse['statusCode'] == 400){
 
-            statusError = true;
-            messageError = jsonResponse['message'];
+            statusError.value = true;
+            messageError.value = jsonResponse['message'];
 
           } else if(jsonResponse['message'] == 'Unauthorized'){
 
-            statusError = true;
-            messageError = "Billetera incorrectos";
+            statusError.value = true;
+            messageError.value = "Billetera incorrectos";
 
           }  
         }
       } on SocketException catch (_) {
-        statusError = true;
-        messageError = "Sin conexión, inténtalo de nuevo mas tarde";
+
+        statusError.value = true;
+        messageError.value = "Sin conexión, inténtalo de nuevo mas tarde";
 
       } 
   
-    }
+    } 
 
-    Get.back(result: true);
+    if (statusError.value)
+      Get.back(result: true);
+
+  }
+
+
+  String jsonToUrl(value){
+    String parametersUrl="?";
+    final json = jsonDecode(value) as Map;
+    for (final name in json.keys) {
+      final value = json[name];
+      parametersUrl = parametersUrl + "$name=$value&";
+    }
+    
+    return parametersUrl.substring(0, parametersUrl.length-1);
   }
 }

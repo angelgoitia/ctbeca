@@ -3,6 +3,7 @@ import 'package:ctbeca/env.dart';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 
@@ -16,7 +17,10 @@ class _LoginPageState extends State<LoginPage> {
   final _formKeyLogin = new GlobalKey<FormState>();
   final FocusNode _emailFocus = FocusNode();  
   final FocusNode _passwordFocus = FocusNode();
+  final _emailwalletController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  LoginController controllerLogin = Get.put(LoginController());
   
   @override
   Widget build(BuildContext context) {
@@ -30,20 +34,17 @@ class _LoginPageState extends State<LoginPage> {
             child: Container(
               alignment: Alignment.center,
               child: SingleChildScrollView(
-                child: GetBuilder<LoginController>(
-                  init:LoginController(),
-                  builder: (_) => Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Image(
-                        image: AssetImage("assets/axies.png"),
-                        width: size.width/2,
-                      ),
-                      formLogin(context, _), 
-                      SizedBox(height: 25,),
-                      buttonLogin(context, _), 
-                    ]
-                  ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Image(
+                      image: AssetImage("assets/logo/logo.png"),
+                      width: size.width/2,
+                    ),
+                    formLogin(context), 
+                    SizedBox(height: 25,),
+                    buttonLogin(context), 
+                  ]
                 ),
               ),
             )
@@ -53,63 +54,69 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget formLogin(context, _){
+  Widget formLogin(context){
     return new Form(
       key: _formKeyLogin,
       child: new ListView(
         shrinkWrap: true,
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.fromLTRB(30.0, 20.0, 30.0, 0.0),
-            child: new TextFormField(
-              maxLines: 1,
-              keyboardType: TextInputType.text,
-              autofocus: false,
-              focusNode: _emailFocus,
-              onEditingComplete: () {
-                if(_.statusPassword)
-                  FocusScope.of(context).requestFocus(_passwordFocus);
-                else 
-                  tapSubmit();
-              } ,
-              decoration: new InputDecoration(
-                labelText: !_.statusPassword? "Billetera" : "Correo Electrónico",
-                labelStyle: TextStyle(
-                  color: colorPrimary,
+          Obx(
+            () => Padding(
+              padding: const EdgeInsets.fromLTRB(30.0, 20.0, 30.0, 0.0),
+              child: new TextFormField(
+                controller: _emailwalletController,
+                maxLines: 1,
+                keyboardType: TextInputType.text,
+                autofocus: false,
+                focusNode: _emailFocus,
+                onEditingComplete: () {
+                  if(controllerLogin.statusPassword.value)
+                    FocusScope.of(context).requestFocus(_passwordFocus);
+                  else 
+                    tapSubmit();
+                } ,
+                inputFormatters: [
+                  FilteringTextInputFormatter.deny(new RegExp(r"\s\b|\b\s"))
+                ],
+                decoration: new InputDecoration(
+                  labelText: !controllerLogin.statusPassword.value? "Billetera" : "Correo Electrónico",
+                  labelStyle: TextStyle(
+                    color: colorPrimary,
+                    fontFamily: 'MontserratSemiBold',
+                    fontSize: 14,
+                  ),
+                  icon: new Icon(
+                    controllerLogin.statusPassword.value? Icons.mail : Icons.account_balance_wallet ,
+                    color: colorPrimary,
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: colorPrimary),
+                  ),
+                ),
+                validator: (value) => value!.trim().length >5? null : controllerLogin.statusPassword.value? 'Ingrese un correo electrónico válido' : 'Ingrese una billetera válido',
+                onChanged: controllerLogin.validarEmailWallet,
+                textInputAction: !controllerLogin.statusPassword.value? TextInputAction.done : TextInputAction.next ,
+                cursorColor: colorPrimary,
+                style: TextStyle(
                   fontFamily: 'MontserratSemiBold',
                   fontSize: 14,
                 ),
-                icon: new Icon(
-                  _.statusPassword? Icons.mail : Icons.account_balance_wallet ,
-                  color: colorPrimary,
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: colorPrimary),
-                ),
-              ),
-              validator: (value) => value!.trim().length >5? null : 'Ingrese una billetera válido',
-              onSaved: (value) => _.emailWallet = value!.toLowerCase().trim(),
-              onChanged: _.validarEmailWallet,
-              textInputAction: !_.statusPassword? TextInputAction.done : TextInputAction.next ,
-              cursorColor: colorPrimary,
-              style: TextStyle(
-                fontFamily: 'MontserratSemiBold',
-                fontSize: 14,
               ),
             ),
           ),
-          Visibility(
-            visible: _.statusPassword,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(30.0, 20.0, 30.0, 0.0),
-              child: new TextFormField(
-                controller: _passwordController,
-                maxLines: 1,
-                autofocus: false,
-                keyboardType: TextInputType.text,
-                obscureText: _.passwordVisible,
-                focusNode: _passwordFocus,
-                decoration: new InputDecoration(
+          Obx(
+            () => Visibility(
+              visible: controllerLogin.statusPassword.value,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(30.0, 20.0, 30.0, 0.0),
+                child: new TextFormField(
+                  controller: _passwordController,
+                  maxLines: 1,
+                  autofocus: false,
+                  keyboardType: TextInputType.text,
+                  obscureText: controllerLogin.passwordVisible.value,
+                  focusNode: _passwordFocus,
+                  decoration: new InputDecoration(
                     labelText: "Contraseña",
                     labelStyle: TextStyle(
                       color: colorPrimary,
@@ -122,45 +129,50 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _.passwordVisible
+                        controllerLogin.passwordVisible.value
                         ? Icons.visibility_off
                         : Icons.visibility,
                         color: colorPrimary,
                         ),
-                      onPressed: () =>_.passwordVisible = !_.passwordVisible,
+                      onPressed: () =>controllerLogin.passwordVisible.value = !controllerLogin.passwordVisible.value,
                     ),
                     focusedBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: colorPrimary),
                     ),
                   ),
-                validator: (value) => value!.isEmpty? 'Ingrese una contraseña válida': null,
-                onSaved: (value) => _.password = value!.trim(),
-                textInputAction: TextInputAction.done,
-                onFieldSubmitted: (term){
-                  FocusScope.of(context).requestFocus(new FocusNode()); //save the keyboard
-                  tapSubmit();
-                },
-                cursorColor: colorPrimary,
-                style: TextStyle(
-                  fontFamily: 'MontserratSemiBold',
-                  fontSize: 14,
-                ),
-              ),
-            )
-          ),
-          Visibility(
-            visible: _.statusError,
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 15.0),
-                child: AutoSizeText(
-                  !_.statusError? '' : _.messageError!,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.deny(new RegExp(r"\s\b|\b\s"))
+                  ],
+                  validator: (value) => value!.isEmpty || value.trim().length < 5? 'Ingrese una contraseña válida': null,
+                  textInputAction: TextInputAction.done,
+                  onFieldSubmitted: (term){
+                    FocusScope.of(context).requestFocus(new FocusNode()); //save the keyboard
+                    tapSubmit();
+                  },
+                  cursorColor: colorPrimary,
                   style: TextStyle(
-                    color: Colors.red,
                     fontFamily: 'MontserratSemiBold',
+                    fontSize: 14,
                   ),
-                  maxFontSize: 14,
-                  minFontSize: 14,
+                ),
+              )
+            ),
+          ),
+          Obx(
+            () => Visibility(
+              visible: controllerLogin.statusError.value,
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 15.0),
+                  child: AutoSizeText(
+                    controllerLogin.messageError.value,
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontFamily: 'MontserratSemiBold',
+                    ),
+                    maxFontSize: 14,
+                    minFontSize: 14,
+                  ),
                 ),
               ),
             ),
@@ -170,7 +182,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget buttonLogin(context, _){
+  Widget buttonLogin(context){
     var size = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: () {
@@ -212,10 +224,8 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void tapSubmit(){
-    final _controller = Get.put(LoginController());
     if(_formKeyLogin.currentState!.validate()){
-      _formKeyLogin.currentState!.save();
-      _controller.formSubmit();
+      controllerLogin.formSubmit(_emailwalletController.text.toLowerCase().trim(),_passwordController.text.trim());
       _passwordController.clear();
     } 
   }

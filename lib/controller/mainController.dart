@@ -3,11 +3,11 @@ import 'package:get/get.dart';
 
 class MainController extends GetxController {
    
-   @override
-   void onReady() {
+  @override
+  void onReady() {
     super.onReady();
     Future.delayed(Duration(seconds:2), (){
-      Get.to(LoginPage(), transition: Transition.zoom);
+      Get.off(LoginPage(), transition: Transition.zoom);
     });
   }
 }

@@ -9,6 +9,12 @@ class GlobalController extends GetxController {
 
   User user = User();
   Player player = Player();
+  RxList<Player> players = <Player>[].obs;
+
+
+  Future<List<Player>> getPlayers(data) async {
+    return (data as List).map((e) => Player.fromJson(e)).toList();
+  }
 
 
   loading(){
