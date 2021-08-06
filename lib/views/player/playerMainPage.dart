@@ -1,4 +1,6 @@
-import 'package:ctbeca/controller/mainAdminController.dart';
+import 'package:ctbeca/controller/globalController.dart';
+import 'package:ctbeca/env.dart';
+import 'package:ctbeca/views/widget/navbar.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -28,38 +30,56 @@ class _PlayerMainPageState extends State<PlayerMainPage> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<MainAdminController>(
-      init:MainAdminController(),
-      builder: (_) => WillPopScope(
-      onWillPop: _.onBackPressed,
+    
+    GlobalController globalController = Get.put(GlobalController());
+
+    return WillPopScope(
+      onWillPop: globalController.onBackPressed,
       child: Scaffold(
         backgroundColor: Colors.white,
-        body: GFTabBar(
-          length: 3,
-          controller: tabController,
-          tabs: [
-            Tab(
-              icon: Icon(Icons.directions_bike),
-              child: Text(
-                "Tab1",
+        body: Column(
+          children: [
+            Navbar(),
+            Expanded(
+              child: GFTabBarView(
+                controller: tabController,
+                children: <Widget>[
+                  Container(color: Colors.red),
+                  Container(color: Colors.green),
+                  Container(color: Colors.blue)
+                ]
               ),
             ),
-            Tab(
-              icon: Icon(Icons.directions_bus),
-              child: Text(
-                "Tab2",
+            GFTabBar(
+              length: 3,
+              controller: tabController,
+              indicatorColor: colorPrimary,
+              indicator: UnderlineTabIndicator(
+                borderSide: BorderSide(width: 5.0),
               ),
-            ),
-            Tab(
-              icon: Icon(Icons.directions_railway),
-              child: Text(
-                "Tab3",
-              ),
+              tabBarColor: Colors.white,
+              labelColor: colorPrimary,
+              unselectedLabelColor: Colors.black,
+              tabs: [
+                Tab(
+                  icon: Icon(Icons.home),
+                  text: "Inicio",
+                ),
+                Tab(
+                  icon: Icon(Icons.videogame_asset),
+                  text: "LSP"
+                ),
+                Tab(
+                  icon: Icon(Icons.request_quote_rounded),
+                  text: "Historial",
+                ),
+              ],
+              
             ),
           ],
-        ),
+        )
       ),
-    )
     );
+
   }
 }

@@ -1,4 +1,8 @@
-import 'package:ctbeca/controller/mainAdminController.dart';
+import 'package:ctbeca/controller/globalController.dart';
+import 'package:ctbeca/env.dart';
+import 'package:ctbeca/views/admin/widget/allPlayerWidget.dart';
+import 'package:ctbeca/views/admin/widget/allSlpWidget.dart';
+import 'package:ctbeca/views/admin/widget/homeWidget.dart';
 import 'package:ctbeca/views/widget/navbar.dart';
 
 import 'package:flutter/material.dart';
@@ -18,7 +22,7 @@ class _AdminMainPageState extends State<AdminMainPage> with SingleTickerProvider
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 3, vsync: this);
+    tabController = TabController(length: 4, vsync: this);
   }
 
   @override
@@ -29,44 +33,58 @@ class _AdminMainPageState extends State<AdminMainPage> with SingleTickerProvider
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<MainAdminController>(
-      init:MainAdminController(),
-      builder: (_) => WillPopScope(
-      onWillPop: _.onBackPressed,
+
+    GlobalController globalController = Get.put(GlobalController());
+    
+    return WillPopScope(
+      onWillPop: globalController.onBackPressed,
       child: Scaffold(
         backgroundColor: Colors.white,
         body: Column(
           children: [
             Navbar(),
-            Expanded(child: Container()),
+            Expanded(
+              child: GFTabBarView(
+                controller: tabController,
+                children: <Widget>[
+                  HomeWidget(),
+                  AllPlayerWidget(),
+                  AllSlpWidget(),
+                  Container(color: Colors.blue)
+                ]
+              ),
+            ),
             GFTabBar(
-              length: 3,
+              length: 4,
               controller: tabController,
+              tabBarColor: Colors.white,
+              indicatorColor: colorPrimary,
+              labelColor: colorPrimary,
+              unselectedLabelColor: Colors.black87,
+              isScrollable: false,
               tabs: [
                 Tab(
-                  icon: Icon(Icons.directions_bike),
-                  child: Text(
-                    "Tab1",
-                  ),
+                  icon: Icon(Icons.home),
+                  text: "Inicio",
                 ),
                 Tab(
-                  icon: Icon(Icons.directions_bus),
-                  child: Text(
-                    "Tab2",
-                  ),
+                  icon: Icon(Icons.person),
+                  text: "Becados",
                 ),
                 Tab(
-                  icon: Icon(Icons.directions_railway),
-                  child: Text(
-                    "Tab3",
-                  ),
+                  icon: Icon(Icons.videogame_asset),
+                  text: "LSP"
+                ),
+                Tab(
+                  icon: Icon(Icons.request_quote_rounded),
+                  text: "Historial",
                 ),
               ],
+              
             ),
           ],
         )
       ),
-    )
     );
   }
 }

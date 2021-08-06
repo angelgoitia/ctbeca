@@ -13,8 +13,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  auto_size_text: ^3.0.0-nullsafety.0
+  auto_size_text_pk: ^3.0.0
   cupertino_icons: ^1.0.2
+  charts_flutter: ^0.11.0
   get: ^4.3.0
   getwidget: ^2.0.3
   http: ^0.13.3

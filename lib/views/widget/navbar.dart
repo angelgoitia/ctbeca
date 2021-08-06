@@ -1,6 +1,5 @@
 import 'package:ctbeca/env.dart';
 
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 

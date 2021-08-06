@@ -1,15 +1,15 @@
 import 'package:ctbeca/controller/globalController.dart';
 import 'package:ctbeca/env.dart';
 import 'package:ctbeca/models/player.dart';
-import 'package:ctbeca/models/user.dart';
+import 'package:ctbeca/models/admin.dart';
 import 'package:ctbeca/views/admin/adminMainPage.dart';
 import 'package:ctbeca/views/player/playerMainPage.dart';
 
+import 'dart:convert';
+import 'dart:io';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
-import 'dart:io';
 
 
 class LoginController extends GetxController {  
@@ -50,7 +50,10 @@ class LoginController extends GetxController {
 
   formSubmit(emailWallet, password)async{
     var result, response, jsonResponse;
-    GlobalController().loading();
+
+    GlobalController globalController = Get.put(GlobalController());
+
+    globalController.loading();
 
     if(this.statusPassword.value){
 
@@ -59,9 +62,9 @@ class LoginController extends GetxController {
         if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
 
           var parameters = jsonToUrl(jsonEncode({
-              'email': emailWallet,
-              'password': password,
-            }));
+            'email': emailWallet,
+            'password': password,
+          }));
 
           response = await http.get(
             Uri.parse(urlApi+"loginAdmin/$parameters"),
@@ -75,12 +78,13 @@ class LoginController extends GetxController {
           jsonResponse = jsonDecode(response.body);
 
           if (jsonResponse['statusCode'] == 201) {
-            print("entro");
+
             statusError.value = false;
             SharedPreferences prefs = await SharedPreferences.getInstance();
             prefs.setString('access_token', jsonResponse['access_token']);
-            GlobalController().user = new User.fromJson(jsonResponse);
-            GlobalController().getPlayers(jsonResponse['players']);
+            prefs.setInt('type',0);
+            globalController.admin = new Admin.fromJson(jsonResponse);
+            globalController.players = (jsonResponse['players'] as List).map((val) => Player.fromJson(val)).toList();
             Get.off(AdminMainPage());
 
           } else if(jsonResponse['statusCode'] == 400){
@@ -107,16 +111,17 @@ class LoginController extends GetxController {
         result = await InternetAddress.lookup('google.com'); //verify network
         if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
 
-          response = await http.post(
-            Uri.parse(urlApi+"loginPlayer"),
+          var parameters = jsonToUrl(jsonEncode({
+            'wallet': emailWallet,
+          }));
+
+          response = await http.get(
+            Uri.parse(urlApi+"loginPlayer/$parameters"),
             headers:{
               'Accept': 'application/json',
               'Content-Type': 'application/json',
               'X-Requested-With': 'XMLHttpRequest',
             },
-            body: jsonEncode({
-              'wallet': emailWallet,
-            }),
           ); // petición api
           print(response.body);
           jsonResponse = jsonDecode(response.body);
@@ -126,8 +131,9 @@ class LoginController extends GetxController {
             statusError.value = false;
             SharedPreferences prefs = await SharedPreferences.getInstance();
             prefs.setString('access_token', jsonResponse['access_token']);
-            GlobalController().user = new User.fromJson(jsonResponse);
-            GlobalController().player = new Player.fromJson(jsonResponse['players']);
+            prefs.setInt('type',1);
+            globalController.admin = new Admin.fromJson(jsonResponse);
+            globalController.player = new Player.fromJson(jsonResponse['players']);
             Get.back();
             Get.off(PlayerMainPage());
             
