@@ -69,6 +69,9 @@ class _AdminMainPageState extends State<AdminMainPage> with SingleTickerProvider
               unselectedLabelColor: Colors.black87,
               isScrollable: false,
               indicatorWeight: 4,
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: colorPrimary),
+              ),
               tabs: [
                 Tab(
                   icon: Icon(Icons.home),
@@ -95,7 +98,7 @@ class _AdminMainPageState extends State<AdminMainPage> with SingleTickerProvider
           () => Visibility(
             visible: globalController.indexController.value == 1? true : false,
             child: Padding(
-              padding: EdgeInsets.only(bottom: 70),
+              padding: EdgeInsets.only(bottom: 80),
               child: FloatingActionButton(
                 onPressed: () {}, //TODO: agregar
                 child: const Icon(Icons.add),

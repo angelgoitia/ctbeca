@@ -1,6 +1,7 @@
 import 'package:ctbeca/controller/globalController.dart';
 import 'package:ctbeca/env.dart';
 import 'package:ctbeca/models/history.dart';
+import 'package:ctbeca/models/myRow.dart';
 import 'package:ctbeca/models/player.dart';
 import 'package:ctbeca/views/player/playerMainPage.dart';
 
@@ -9,14 +10,16 @@ import 'dart:io';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
+
 class PlayerController extends GetxController {
   final player = Player().obs;
-  RxList<History> histories = <History>[].obs;
-
+  final dataGraphic = <MyRow>[].obs;
+  final histories = <History>[].obs;
+  
   getPlayer() async {
     GlobalController globalController = Get.put(GlobalController());
     var result, response, jsonResponse;
-    print("entro ${player.value.accessToken}");
+    
     try {
       result = await InternetAddress.lookup('google.com'); //verify network
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
@@ -35,7 +38,12 @@ class PlayerController extends GetxController {
 
         if (jsonResponse['statusCode'] == 201) {
 
+          String? accessToken = player.value.accessToken;
           player.value = new Player.fromJson(jsonResponse['player']);
+          player.value.accessToken = accessToken;
+
+          await getDataGraphic();
+
           Get.off(PlayerMainPage());
 
         } else{
@@ -45,5 +53,29 @@ class PlayerController extends GetxController {
     } on SocketException catch (_) {
       //TODO: consultar BD        
     } 
+  }
+
+  getDataGraphic(){
+    for( var i = 6 ; i >= 1; i-- ) { 
+      final dateLastSixDays = i == 1? DateTime.now() : DateTime.now().subtract(Duration(days:i-1));
+      var statusForeach = false;
+      for (var item in player.value.listSlp!) {
+        DateTime dateList = DateTime.parse(item.createdAt!);
+        if(dateList.day == dateLastSixDays.day && dateList.month == dateLastSixDays.month && dateList.year == dateLastSixDays.year){
+          statusForeach = true;
+          dataGraphic.add(
+            MyRow(dateLastSixDays, item.daily!)
+          );
+        }
+      }
+
+      if(!statusForeach)
+        dataGraphic.add(
+          MyRow(dateLastSixDays, 0)
+        );
+
+    } 
+
+    return true;
   }
 }

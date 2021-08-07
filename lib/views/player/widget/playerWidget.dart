@@ -1,9 +1,10 @@
-import 'package:auto_size_text_pk/auto_size_text_pk.dart';
 import 'package:ctbeca/controller/playerController.dart';
 import 'package:ctbeca/env.dart';
+
+import 'package:auto_size_text_pk/auto_size_text_pk.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:getwidget/getwidget.dart';
 
 class PLayerWidget extends StatefulWidget {
   
@@ -197,13 +198,33 @@ class _PLayerWidgetState extends State<PLayerWidget> {
 
           Padding(
             padding: EdgeInsets.all(5),
-            child: GFAvatar(
-              shape: GFAvatarShape.standard,
-              radius: size.width / 5,
-              backgroundImage: NetworkImage(
-                "http://"+url+"/storage/${playerController.player.value.urlCodeQr}",
+            child: Center(
+              child: Container(
+                width: size.width / 2,
+                height: size.width / 2,
+                decoration: BoxDecoration(
+                  borderRadius: new BorderRadius.circular(10.0),
+                  boxShadow: [
+                    new BoxShadow(
+                      color: Color(0xffA4A4A4),
+                      offset: Offset(1.0, 5.0),
+                      blurRadius: 3.0,
+                    ),
+                  ]
+                ),
+                child: ClipRRect(
+                  borderRadius: new BorderRadius.circular(10.0),
+                  child: CachedNetworkImage(
+                    imageUrl: "http://"+url+"/storage/${playerController.player.value.urlCodeQr}",
+                    placeholder: (context, url) => CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(colorPrimary)),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                    fit: BoxFit.fill,              
+                  )
+                ),
               ),
-            ),
+            ), 
+            
+            
           ),
 
           Padding(

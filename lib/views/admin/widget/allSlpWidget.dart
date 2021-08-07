@@ -6,6 +6,7 @@ import 'package:auto_size_text_pk/auto_size_text_pk.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 
 class AllSlpWidget extends StatefulWidget {
@@ -15,7 +16,8 @@ class AllSlpWidget extends StatefulWidget {
 }
 
 class _AllSlpWidgetState extends State<AllSlpWidget> {
-
+  final DateFormat formatterBD = DateFormat('yyyy-MM-dd');
+  final DateFormat formatter = DateFormat('dd/MM/yyyy');
   GlobalController globalController = Get.put(GlobalController());
   AdminController adminController = Get.put(AdminController());
 
@@ -183,7 +185,7 @@ class _AllSlpWidgetState extends State<AllSlpWidget> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         AutoSizeText(
-                          converterDate(adminController.players[globalController.indexSelect.toInt()].listSlp![index].createdAt!),
+                          formatter.format((formatterBD.parse(adminController.players[globalController.indexSelect.toInt()].listSlp![index].createdAt!))).toString(),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.black87,
@@ -250,11 +252,6 @@ class _AllSlpWidgetState extends State<AllSlpWidget> {
   getLastSlp(listSlp, listLenght){
 
     return "${listSlp[listLenght-1].total} LSP";
-  }
-
-  converterDate(date){
-    date.replaceAll(RegExp(r'-'), '/');
-    return date.substring(0, 10);
   }
 
   Widget _customDropDownExample(BuildContext context, Player? item, String itemDesignation) {

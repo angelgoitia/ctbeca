@@ -1,9 +1,15 @@
+import 'package:ctbeca/controller/playerController.dart';
 import 'package:ctbeca/env.dart';
 import 'package:ctbeca/models/myRow.dart';
 
+import 'package:ctbeca/models/slp.dart';
+
+import 'package:auto_size_text_pk/auto_size_text_pk.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:getwidget/getwidget.dart';
+import 'package:intl/intl.dart';
 
 class HomeWidget extends StatefulWidget {
 
@@ -13,23 +19,12 @@ class HomeWidget extends StatefulWidget {
 
 class _HomeWidgetState extends State<HomeWidget> {
 
+  DateTime now = new DateTime.now();
+  final DateFormat formatter = DateFormat('yyyy-MM-dd');
   List<MaterialColor> listColor = [Colors.orange, Colors.blue, Colors.red];
   List<String> listDate = ["Hoy", "Ayer", "Ultimos 6 Dias"];
 
- // Defining the data
-  final data = [
-    new MyRow(new DateTime(2017, 9, 25), 6),
-    new MyRow(new DateTime(2017, 9, 26), 8),
-    new MyRow(new DateTime(2017, 9, 27), 6),
-    new MyRow(new DateTime(2017, 9, 28), 9),
-    new MyRow(new DateTime(2017, 9, 29), 11),
-    new MyRow(new DateTime(2017, 9, 30), 15),
-    new MyRow(new DateTime(2017, 10, 01), 25),
-    new MyRow(new DateTime(2017, 10, 02), 33),
-    new MyRow(new DateTime(2017, 10, 03), 27),
-    new MyRow(new DateTime(2017, 10, 04), 31),
-    new MyRow(new DateTime(2017, 10, 05), 23),
-  ];
+  PlayerController playerController = Get.put(PlayerController());
 
   _getSeriesData() {
     List<charts.Series<MyRow, DateTime>> series = [
@@ -37,7 +32,7 @@ class _HomeWidgetState extends State<HomeWidget> {
         id: 'Amount',
         domainFn: (MyRow row, _) => row.timeStamp,
         measureFn: (MyRow row, _) => row.amount,
-        data: data,
+        data: playerController.dataGraphic,
         colorFn: (MyRow row, _) => charts.MaterialPalette.green.shadeDefault,
         fillColorFn: (MyRow row, _) => charts.MaterialPalette.blue.shadeDefault,
       )
@@ -47,15 +42,18 @@ class _HomeWidgetState extends State<HomeWidget> {
 
   @override
   Widget build(BuildContext context) {
+
     return Container(
       child: SingleChildScrollView(
-        child: Column(
-          children: [
-            showWidget(0),
-            showWidget(1),
-            showWidget(2),
-            showChart(2),
-          ]
+        child: Obx(
+          () => Column(
+            children: [
+              showWidget(0),
+              showWidget(1),
+              showWidget(2),
+              showChart(2),
+            ]
+          )
         )
       )
     );
@@ -63,6 +61,8 @@ class _HomeWidgetState extends State<HomeWidget> {
 
   showWidget(int index)
   {
+    var size = MediaQuery.of(context).size;
+
     return GFCard(
       shape: RoundedRectangleBorder(
         side: BorderSide(color: colorPrimary, width: 1),
@@ -78,11 +78,30 @@ class _HomeWidgetState extends State<HomeWidget> {
           child: GFAvatar(
             backgroundImage: AssetImage("assets/icons/SLP.png"),
             backgroundColor: Colors.transparent,
-            size: 30,
+            size: size.width /15,
           ),
         ),
         titleText: 'Total de SLP',
-        subTitleText: 0.toString(),
+        title: AutoSizeText(
+          'Total de SLP',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.normal,
+            fontFamily: 'MontserratBold',
+          ),
+          maxFontSize: 14,
+          minFontSize: 14,
+        ),
+        subTitleText: "",
+        icon: AutoSizeText(
+          showTotal(index, playerController.player.value.listSlp!).toString(),style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.normal,
+            fontFamily: 'MontserratMedium',
+          ),
+          maxFontSize: 18,
+          minFontSize: 18,
+        ),
       ),
       content: Row(
         children: [
@@ -93,6 +112,46 @@ class _HomeWidgetState extends State<HomeWidget> {
       ),
     );
   }
+
+  showTotal(int index, List<Slp> listSlp)
+  {
+    int totalSLP = 0;
+
+    if (listSlp.length == 0) return totalSLP;
+
+    switch (index) {
+      case 0:
+        DateTime dateList = DateTime.parse(listSlp[listSlp.length -1].createdAt!);
+        if(dateList.day == now.day && dateList.month == now.month && dateList.year == now.year){
+          totalSLP += listSlp[listSlp.length -1].daily!.toInt();
+        }
+        break;
+      case 1:
+        final yesterdays = DateTime.now().subtract(Duration(days:1));
+        for (var item in listSlp) {
+          DateTime dateList = DateTime.parse(item.createdAt!);
+          if(dateList.day == yesterdays.day && dateList.month == yesterdays.month && dateList.year == yesterdays.year){
+            totalSLP += item.daily!.toInt();
+            break;
+          }
+        }
+        break;
+      case 2:
+        final _lastDay = DateTime.now().add(Duration(days:1));
+        final dateLastSixDays = DateTime.now().subtract(Duration(days:6));
+        
+        for (var item in listSlp) {
+          DateTime dateList = DateTime.parse(item.createdAt!);
+          if(dateLastSixDays.isBefore(dateList) && _lastDay.isAfter(dateList)){
+            totalSLP += item.daily!.toInt();
+          }
+        }
+        break;
+    }
+
+    return totalSLP;
+  }
+
 
   showChart(int index)
   {
@@ -106,7 +165,10 @@ class _HomeWidgetState extends State<HomeWidget> {
         children: [
           Container(
             height: 350,
-            child: new charts.TimeSeriesChart(_getSeriesData(), animate: true,),
+            child: new charts.TimeSeriesChart(
+              _getSeriesData(), 
+              animate: true,
+            ),
           ),
           SizedBox(height: 15,),
           Row(

@@ -137,6 +137,7 @@ class LoginController extends GetxController {
             prefs.setString('access_token', jsonResponse['access_token']);
             prefs.setInt('type',1);
             playerController.player.value = new Player.fromJson(jsonResponse['player']);
+            playerController.player.value.accessToken = jsonResponse['access_token'];
             Get.back();
             Get.off(PlayerMainPage());
             

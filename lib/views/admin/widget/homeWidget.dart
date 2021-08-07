@@ -1,9 +1,14 @@
+import 'package:ctbeca/controller/adminController.dart';
 import 'package:ctbeca/env.dart';
 import 'package:ctbeca/models/myRow.dart';
 
+import 'package:auto_size_text_pk/auto_size_text_pk.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:ctbeca/models/player.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:getwidget/getwidget.dart';
+import 'package:intl/intl.dart';
 
 class HomeWidget extends StatefulWidget {
 
@@ -13,23 +18,12 @@ class HomeWidget extends StatefulWidget {
 
 class _HomeWidgetState extends State<HomeWidget> {
 
+  DateTime now = new DateTime.now();
+  final DateFormat formatter = DateFormat('yyyy-MM-dd');
   List<MaterialColor> listColor = [Colors.orange, Colors.blue, Colors.red];
   List<String> listDate = ["Hoy", "Ayer", "Ultimos 6 Dias"];
 
- // Defining the data
-  final data = [
-    new MyRow(new DateTime(2017, 9, 25), 6),
-    new MyRow(new DateTime(2017, 9, 26), 8),
-    new MyRow(new DateTime(2017, 9, 27), 6),
-    new MyRow(new DateTime(2017, 9, 28), 9),
-    new MyRow(new DateTime(2017, 9, 29), 11),
-    new MyRow(new DateTime(2017, 9, 30), 15),
-    new MyRow(new DateTime(2017, 10, 01), 25),
-    new MyRow(new DateTime(2017, 10, 02), 33),
-    new MyRow(new DateTime(2017, 10, 03), 27),
-    new MyRow(new DateTime(2017, 10, 04), 31),
-    new MyRow(new DateTime(2017, 10, 05), 23),
-  ];
+  AdminController adminController = Get.put(AdminController());
 
   _getSeriesData() {
     List<charts.Series<MyRow, DateTime>> series = [
@@ -37,7 +31,7 @@ class _HomeWidgetState extends State<HomeWidget> {
         id: 'Amount',
         domainFn: (MyRow row, _) => row.timeStamp,
         measureFn: (MyRow row, _) => row.amount,
-        data: data,
+        data: adminController.dataGraphic,
         colorFn: (MyRow row, _) => charts.MaterialPalette.green.shadeDefault,
         fillColorFn: (MyRow row, _) => charts.MaterialPalette.blue.shadeDefault,
       )
@@ -82,7 +76,26 @@ class _HomeWidgetState extends State<HomeWidget> {
           ),
         ),
         titleText: 'Total de SLP',
-        subTitleText: 0.toString(),
+        title: AutoSizeText(
+          'Total de SLP',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.normal,
+            fontFamily: 'MontserratBold',
+          ),
+          maxFontSize: 14,
+          minFontSize: 14,
+        ),
+        subTitleText: "",
+        icon: AutoSizeText(
+          showTotal(index, adminController.players).toString(),style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.normal,
+            fontFamily: 'MontserratMedium',
+          ),
+          maxFontSize: 18,
+          minFontSize: 18,
+        ),
       ),
       content: Row(
         children: [
@@ -92,6 +105,50 @@ class _HomeWidgetState extends State<HomeWidget> {
         ],
       ),
     );
+  }
+
+  showTotal(int index, List<Player> players)
+  {
+    int totalSLP = 0;
+
+    if (players.length == 0) return totalSLP;
+
+    switch (index) {
+      case 0:
+        for (var player in players) {
+          DateTime dateList = DateTime.parse(player.listSlp![player.listSlp!.length -1].createdAt!);
+          if(dateList.day == now.day && dateList.month == now.month && dateList.year == now.year){
+            totalSLP += player.listSlp![player.listSlp!.length -1].daily!.toInt();
+          } 
+        }
+        break;
+      case 1:
+        final yesterdays = DateTime.now().subtract(Duration(days:1));
+        for (var player in players) {
+          for (var item in player.listSlp!) {
+            DateTime dateList = DateTime.parse(item.createdAt!);
+            if(dateList.day == yesterdays.day && dateList.month == yesterdays.month && dateList.year == yesterdays.year){
+              totalSLP += item.daily!.toInt();
+              break;
+            }
+          }
+        }
+        break;
+      case 2:
+        final _lastDay = DateTime.now().add(Duration(days:1));
+        final dateLastSixDays = DateTime.now().subtract(Duration(days:6));
+        for (var player in players) {
+          for (var item in player.listSlp!) {
+            DateTime dateList = DateTime.parse(item.createdAt!);
+            if(dateLastSixDays.isBefore(dateList) && _lastDay.isAfter(dateList)){
+              totalSLP += item.daily!.toInt();
+            }
+          }
+        }
+        break;
+    }
+
+    return totalSLP;
   }
 
   showChart(int index)
@@ -106,7 +163,10 @@ class _HomeWidgetState extends State<HomeWidget> {
         children: [
           Container(
             height: 350,
-            child: new charts.TimeSeriesChart(_getSeriesData(), animate: true,),
+            child: new charts.TimeSeriesChart(
+              _getSeriesData(), 
+              animate: true,
+            ),
           ),
           SizedBox(height: 15,),
           Row(

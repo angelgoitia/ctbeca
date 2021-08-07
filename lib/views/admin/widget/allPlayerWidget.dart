@@ -13,7 +13,6 @@ class AllPlayerWidget extends StatefulWidget {
 }
 
 class _AllPlayerWidgetState extends State<AllPlayerWidget> {
-
   AdminController adminController = Get.put(AdminController());
 
   @override

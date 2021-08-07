@@ -3,6 +3,7 @@ import 'package:ctbeca/controller/playerController.dart';
 import 'package:auto_size_text_pk/auto_size_text_pk.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 
 class SlpWidget extends StatefulWidget {
@@ -12,7 +13,8 @@ class SlpWidget extends StatefulWidget {
 }
 
 class _SlpWidgetState extends State<SlpWidget> {
-
+  final DateFormat formatterBD = DateFormat('yyyy-MM-dd');
+  final DateFormat formatter = DateFormat('dd/MM/yyyy');
   PlayerController playerController = Get.put(PlayerController());
 
   @override
@@ -121,7 +123,7 @@ class _SlpWidgetState extends State<SlpWidget> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         AutoSizeText(
-                          converterDate(playerController.player.value.listSlp![index].createdAt),
+                          formatter.format((formatterBD.parse(playerController.player.value.listSlp![index].createdAt!))).toString(),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.black87,
@@ -188,11 +190,6 @@ class _SlpWidgetState extends State<SlpWidget> {
   getLastSlp(listSlp, listLenght){
 
     return "${listSlp[listLenght-1].total} LSP";
-  }
-
-  converterDate(date){
-    date.replaceAll(RegExp(r'-'), '/');
-    return date.substring(0, 10);
   }
 
 }

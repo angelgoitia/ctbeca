@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:ctbeca/controller/adminController.dart';
 import 'package:ctbeca/controller/playerController.dart';
 import 'package:ctbeca/env.dart';
+import 'package:ctbeca/models/admin.dart';
+import 'package:ctbeca/models/player.dart';
 import 'package:ctbeca/views/loginPage.dart';
 
 import 'dart:io';
@@ -52,9 +54,10 @@ class GlobalController extends GetxController {
     try {
       result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-
-        response = await http.get(
-          Uri.parse(urlApi+"admin"),
+        var route = prefs.getInt('type') == 0? "logout":"logoutPlayer";
+        print("entro: ${playerController.player.value.tokenFCM}");
+        response = await http.post(
+          Uri.parse(urlApi+route),
           headers:{
             'Content-Type': 'application/json',
             'X-Requested-With': 'XMLHttpRequest',

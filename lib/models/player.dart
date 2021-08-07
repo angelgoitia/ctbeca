@@ -18,8 +18,6 @@ class Player{
       reference : json['reference'],
       emailGame : json['emailGame'],
       wallet : json['wallet'],
-      accessToken : json['access_token'],
-      tokenFCM : json['tokenFCM'],
       listSlp: json['total_s_l_p'] == null ? null : (json['total_s_l_p']as List).map((val) => Slp.fromJson(val)).toList(),
     );
   }

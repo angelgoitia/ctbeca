@@ -65,6 +65,9 @@ class _PlayerMainPageState extends State<PlayerMainPage> with SingleTickerProvid
               unselectedLabelColor: Colors.black87,
               isScrollable: false,
               indicatorWeight: 4,
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: colorPrimary),
+              ),
               tabs: [
                 Tab(
                   icon: Icon(Icons.home),
@@ -83,7 +86,6 @@ class _PlayerMainPageState extends State<PlayerMainPage> with SingleTickerProvid
                   text: "Historial",
                 ),
               ],
-              
             ),
           ],
         ),
