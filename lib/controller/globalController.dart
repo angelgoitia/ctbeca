@@ -1,11 +1,10 @@
-import 'package:ctbeca/env.dart';
-import 'package:ctbeca/models/player.dart';
-import 'package:ctbeca/models/admin.dart';
-import 'package:ctbeca/views/admin/adminMainPage.dart';
-import 'package:ctbeca/views/loginPage.dart';
-import 'package:ctbeca/views/player/playerMainPage.dart';
-
 import 'dart:convert';
+
+import 'package:ctbeca/controller/adminController.dart';
+import 'package:ctbeca/controller/playerController.dart';
+import 'package:ctbeca/env.dart';
+import 'package:ctbeca/views/loginPage.dart';
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,90 +12,21 @@ import 'package:getwidget/getwidget.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-class GlobalController extends GetxController {
-  DateTime? currentBackPressTime;  
-  Admin admin = Admin();
-  Player player = Player();
-  List<Player> players = <Player>[].obs;
+class GlobalController extends GetxController { 
+  final indexSelect = 0.obs;
+  final indexController = 0.obs; 
+  DateTime? currentBackPressTime; 
 
+  AdminController adminController = Get.put(AdminController());
+  PlayerController playerController = Get.put(PlayerController());
 
-  List<Player> getListPlayers(data) {
-    return data.map((val) => Player.fromJson(val)).toList();
+  changeSelectIndex(int index)
+  {
+    indexSelect.value = index;
   }
 
-  getAdmin()async {
-    var result, response, jsonResponse;
-
-    try {
-        result = await InternetAddress.lookup('google.com');
-        if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-
-          response = await http.get(
-            Uri.parse(urlApi+"admin"),
-            headers:{
-              'Content-Type': 'application/json',
-              'X-Requested-With': 'XMLHttpRequest',
-              'authorization': 'Bearer ${admin.accessToken}',
-            },
-          ); 
-
-          print(response.body);
-          jsonResponse = jsonDecode(response.body);
-
-          if (jsonResponse['statusCode'] == 201) {
-
-            players = (jsonResponse['players'] as List).map((val) => Player.fromJson(val)).toList();
-            Get.off(AdminMainPage());
-
-          } else{
-            //TODO: cerrar session
-            removeSession();
-          }  
-        }
-      } on SocketException catch (_) {
-        //TODO: consultar BD        
-      } 
-  }
-
-  getPlayer()async {
-    var result, response, jsonResponse;
-
-    try {
-        result = await InternetAddress.lookup('google.com'); //verify network
-        if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-
-          response = await http.get(
-            Uri.parse(urlApi+"player"),
-            headers:{
-              'Content-Type': 'application/json',
-              'X-Requested-With': 'XMLHttpRequest',
-              'authorization': 'Bearer ${player.accessToken}',
-            },
-          ); // petición api
-
-          print(response.body);
-          jsonResponse = jsonDecode(response.body);
-
-          if (jsonResponse['statusCode'] == 201) {
-
-            GlobalController().player = new Player.fromJson(jsonResponse);
-            Get.off(PlayerMainPage());
-
-          } else{
-            //TODO: cerrar session
-            removeSession();
-          }  
-        }
-      } on SocketException catch (_) {
-        //TODO: consultar BD        
-      } 
-  }
-
-  removeSession() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove("access_token");
-    prefs.remove("type");
-    Get.off(LoginPage(), transition: Transition.zoom);
+  changeIndexController(int index){
+    indexController.value = index;
   }
 
   Future<bool> onBackPressed()
@@ -113,10 +43,56 @@ class GlobalController extends GetxController {
     return exit(0);
   }
 
+  removeSession() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var result, response, jsonResponse;
+
+    loading();
+    
+    try {
+      result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+
+        response = await http.get(
+          Uri.parse(urlApi+"admin"),
+          headers:{
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'authorization': 'Bearer ${prefs.getInt('type') == 0? adminController.admin.value.accessToken : playerController.player.value.accessToken}',
+          },
+        ); 
+
+        print(response.body);
+        jsonResponse = jsonDecode(response.body);
+
+        if (jsonResponse['statusCode'] == 201) {
+          
+          Get.back();
+          removeVariable();
+
+        } else{
+          Get.back();
+          showMessage("intentalo de nuevo mas tardes!", false);
+        }  
+      }
+    } on SocketException catch (_) {
+      Get.back();
+      showMessage("intentalo de nuevo mas tardes!", false);     
+    }  
+
+  }
+
+  removeVariable() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove("access_token");
+    prefs.remove("type");
+    Get.off(LoginPage(), transition: Transition.zoom);
+  }
 
   loading(){
     Get.defaultDialog(
       title: "",
+      titlePadding: EdgeInsets.zero,
       backgroundColor: Colors.white,
       barrierDismissible: false,
       content: WillPopScope(
@@ -157,6 +133,50 @@ class GlobalController extends GetxController {
               ),
             ],
         ),
+      ),
+    );
+  }
+
+  showMessage(_titleMessage, _statusCorrectly) async {
+
+    return Get.defaultDialog(
+      title: '',
+      titlePadding: EdgeInsets.zero,
+      barrierDismissible: true,
+      backgroundColor: Colors.white,
+      content: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          _statusCorrectly? Padding(
+            padding: EdgeInsets.all(5),
+            child: Icon(
+              Icons.check_circle,
+              color: colorPrimary,
+              size: 30,
+            )
+          )
+          : Padding(
+            padding: EdgeInsets.all(5),
+            child: Icon(
+              Icons.error,
+              color: Colors.red,
+              size: 30,
+            )
+          ),
+          Container(
+            padding: EdgeInsets.all(5),
+            child: Text(
+              _titleMessage,
+              style: TextStyle(
+                color: Colors.black,
+                fontFamily: 'MontserratSemiBold',
+                fontSize:14
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

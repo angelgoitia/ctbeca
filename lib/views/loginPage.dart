@@ -24,7 +24,9 @@ class _LoginPageState extends State<LoginPage> {
   
   @override
   Widget build(BuildContext context) {
+
     var size = MediaQuery.of(context).size;
+    
     return WillPopScope(
       onWillPop: () async =>false,
       child: Center(

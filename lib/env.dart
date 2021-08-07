@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 //TODO: Url Api (LocalHost)
-String url = "192.168.1.109:8000";
+String url = "192.168.1.108:8000";
 
 
 //TODO: Url Api (hosting)

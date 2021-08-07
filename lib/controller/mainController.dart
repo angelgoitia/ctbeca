@@ -1,4 +1,5 @@
-import 'package:ctbeca/controller/globalController.dart';
+import 'package:ctbeca/controller/adminController.dart';
+import 'package:ctbeca/controller/playerController.dart';
 import 'package:ctbeca/models/admin.dart';
 import 'package:ctbeca/models/player.dart';
 import 'package:ctbeca/views/loginPage.dart';
@@ -20,21 +21,22 @@ class MainController extends GetxController {
   passVariable()async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    GlobalController globalController = Get.put(GlobalController());
+    AdminController adminController = Get.put(AdminController());
+    PlayerController playerController = Get.put(PlayerController());
 
     if(prefs.containsKey('access_token') && prefs.containsKey('type') && prefs.getInt('type') == 0){
 
-      globalController.admin = Admin(
+      adminController.admin.value = Admin(
         accessToken: prefs.getString('access_token'),
       );
-      globalController.getAdmin();
+      adminController.getAdmin();
 
     }else if(prefs.containsKey('access_token') && prefs.containsKey('type') && prefs.getInt('type') == 1 ){
 
-      globalController.player = Player(
+      playerController.player.value = Player(
         accessToken: prefs.getString('access_token'),
       );
-      globalController.getPlayer();
+      playerController.getPlayer();
 
     }else{
 

@@ -1,5 +1,9 @@
 import 'package:ctbeca/controller/globalController.dart';
 import 'package:ctbeca/env.dart';
+import 'package:ctbeca/views/player/widget/historyWidget.dart';
+import 'package:ctbeca/views/player/widget/playerWidget.dart';
+import 'package:ctbeca/views/player/widget/slpWidget.dart';
+import 'package:ctbeca/views/player/widget/homeWidget.dart';
 import 'package:ctbeca/views/widget/navbar.dart';
 
 import 'package:flutter/material.dart';
@@ -16,10 +20,12 @@ class PlayerMainPage extends StatefulWidget {
 class _PlayerMainPageState extends State<PlayerMainPage> with SingleTickerProviderStateMixin {
   TabController? tabController;
 
+  GlobalController globalController = Get.put(GlobalController());
+  
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 3, vsync: this);
+    tabController = TabController(length: 4, vsync: this);
   }
 
   @override
@@ -31,8 +37,6 @@ class _PlayerMainPageState extends State<PlayerMainPage> with SingleTickerProvid
   @override
   Widget build(BuildContext context) {
     
-    GlobalController globalController = Get.put(GlobalController());
-
     return WillPopScope(
       onWillPop: globalController.onBackPressed,
       child: Scaffold(
@@ -43,27 +47,32 @@ class _PlayerMainPageState extends State<PlayerMainPage> with SingleTickerProvid
             Expanded(
               child: GFTabBarView(
                 controller: tabController,
+                physics: NeverScrollableScrollPhysics(),
                 children: <Widget>[
-                  Container(color: Colors.red),
-                  Container(color: Colors.green),
-                  Container(color: Colors.blue)
+                  HomeWidget(),
+                  PLayerWidget(),
+                  SlpWidget(),
+                  HistoryWidget(),
                 ]
               ),
             ),
             GFTabBar(
               length: 3,
               controller: tabController,
-              indicatorColor: colorPrimary,
-              indicator: UnderlineTabIndicator(
-                borderSide: BorderSide(width: 5.0),
-              ),
               tabBarColor: Colors.white,
+              indicatorColor: colorPrimary,
               labelColor: colorPrimary,
-              unselectedLabelColor: Colors.black,
+              unselectedLabelColor: Colors.black87,
+              isScrollable: false,
+              indicatorWeight: 4,
               tabs: [
                 Tab(
                   icon: Icon(Icons.home),
                   text: "Inicio",
+                ),
+                Tab(
+                  icon: Icon(Icons.person),
+                  text: "Perfil",
                 ),
                 Tab(
                   icon: Icon(Icons.videogame_asset),
@@ -77,9 +86,8 @@ class _PlayerMainPageState extends State<PlayerMainPage> with SingleTickerProvid
               
             ),
           ],
-        )
+        ),
       ),
     );
-
   }
 }

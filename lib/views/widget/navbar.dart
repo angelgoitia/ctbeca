@@ -1,6 +1,8 @@
+import 'package:ctbeca/controller/globalController.dart';
 import 'package:ctbeca/env.dart';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Navbar extends StatefulWidget {
@@ -11,6 +13,9 @@ class Navbar extends StatefulWidget {
 }
 
 class _NavbarState extends State<Navbar> {
+
+  GlobalController globalController = Get.put(GlobalController());
+  
   @override
   Widget build(BuildContext context) {
 
@@ -40,8 +45,7 @@ class _NavbarState extends State<Navbar> {
               size: size.width/16,
             ),
             onPressed: () {
-              
-                //exit();
+              globalController.removeSession();
             }
           )
         ),

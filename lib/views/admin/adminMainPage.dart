@@ -1,5 +1,6 @@
 import 'package:ctbeca/controller/globalController.dart';
 import 'package:ctbeca/env.dart';
+import 'package:ctbeca/views/admin/widget/allHistoryWidget.dart';
 import 'package:ctbeca/views/admin/widget/allPlayerWidget.dart';
 import 'package:ctbeca/views/admin/widget/allSlpWidget.dart';
 import 'package:ctbeca/views/admin/widget/homeWidget.dart';
@@ -19,10 +20,16 @@ class AdminMainPage extends StatefulWidget {
 class _AdminMainPageState extends State<AdminMainPage> with SingleTickerProviderStateMixin {
   TabController? tabController;
 
+  GlobalController globalController = Get.put(GlobalController());
+
   @override
   void initState() {
     super.initState();
     tabController = TabController(length: 4, vsync: this);
+
+    tabController!.addListener(() {
+      globalController.indexController.value = tabController!.index;
+    });
   }
 
   @override
@@ -33,8 +40,6 @@ class _AdminMainPageState extends State<AdminMainPage> with SingleTickerProvider
 
   @override
   Widget build(BuildContext context) {
-
-    GlobalController globalController = Get.put(GlobalController());
     
     return WillPopScope(
       onWillPop: globalController.onBackPressed,
@@ -46,11 +51,12 @@ class _AdminMainPageState extends State<AdminMainPage> with SingleTickerProvider
             Expanded(
               child: GFTabBarView(
                 controller: tabController,
+                physics: NeverScrollableScrollPhysics(),
                 children: <Widget>[
                   HomeWidget(),
                   AllPlayerWidget(),
                   AllSlpWidget(),
-                  Container(color: Colors.blue)
+                  AllHistoryWidget(),
                 ]
               ),
             ),
@@ -62,6 +68,7 @@ class _AdminMainPageState extends State<AdminMainPage> with SingleTickerProvider
               labelColor: colorPrimary,
               unselectedLabelColor: Colors.black87,
               isScrollable: false,
+              indicatorWeight: 4,
               tabs: [
                 Tab(
                   icon: Icon(Icons.home),
@@ -83,6 +90,19 @@ class _AdminMainPageState extends State<AdminMainPage> with SingleTickerProvider
               
             ),
           ],
+        ),
+        floatingActionButton: Obx(
+          () => Visibility(
+            visible: globalController.indexController.value == 1? true : false,
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 70),
+              child: FloatingActionButton(
+                onPressed: () {}, //TODO: agregar
+                child: const Icon(Icons.add),
+                backgroundColor: colorPrimary,
+              )
+            )
+          ),
         )
       ),
     );

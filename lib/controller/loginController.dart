@@ -1,4 +1,6 @@
 import 'package:ctbeca/controller/globalController.dart';
+import 'package:ctbeca/controller/adminController.dart';
+import 'package:ctbeca/controller/playerController.dart';
 import 'package:ctbeca/env.dart';
 import 'package:ctbeca/models/player.dart';
 import 'package:ctbeca/models/admin.dart';
@@ -49,9 +51,10 @@ class LoginController extends GetxController {
   }
 
   formSubmit(emailWallet, password)async{
-    var result, response, jsonResponse;
-
     GlobalController globalController = Get.put(GlobalController());
+    AdminController adminController = Get.put(AdminController());
+    PlayerController playerController = Get.put(PlayerController());
+    var result, response, jsonResponse;
 
     globalController.loading();
 
@@ -83,8 +86,9 @@ class LoginController extends GetxController {
             SharedPreferences prefs = await SharedPreferences.getInstance();
             prefs.setString('access_token', jsonResponse['access_token']);
             prefs.setInt('type',0);
-            globalController.admin = new Admin.fromJson(jsonResponse);
-            globalController.players = (jsonResponse['players'] as List).map((val) => Player.fromJson(val)).toList();
+            adminController.admin.value = new Admin.fromJson(jsonResponse);
+            adminController.players.value = (jsonResponse['players'] as List).map((val) => Player.fromJson(val)).toList();
+            Get.back();
             Get.off(AdminMainPage());
 
           } else if(jsonResponse['statusCode'] == 400){
@@ -106,13 +110,13 @@ class LoginController extends GetxController {
       } 
   
     }else{
-
+      
       try {
         result = await InternetAddress.lookup('google.com'); //verify network
         if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-
+          var wallet = emailWallet.replaceAll("ronin:","");
           var parameters = jsonToUrl(jsonEncode({
-            'wallet': emailWallet,
+            'wallet': wallet,
           }));
 
           response = await http.get(
@@ -132,8 +136,7 @@ class LoginController extends GetxController {
             SharedPreferences prefs = await SharedPreferences.getInstance();
             prefs.setString('access_token', jsonResponse['access_token']);
             prefs.setInt('type',1);
-            globalController.admin = new Admin.fromJson(jsonResponse);
-            globalController.player = new Player.fromJson(jsonResponse['players']);
+            playerController.player.value = new Player.fromJson(jsonResponse['player']);
             Get.back();
             Get.off(PlayerMainPage());
             
