@@ -29,9 +29,9 @@ class _HomeWidgetState extends State<HomeWidget> {
     List<charts.Series<MyRow, DateTime>> series = [
       charts.Series<MyRow, DateTime>(
         id: 'Amount',
+        data: adminController.dataGraphic,
         domainFn: (MyRow row, _) => row.timeStamp,
         measureFn: (MyRow row, _) => row.amount,
-        data: adminController.dataGraphic,
         colorFn: (MyRow row, _) => charts.MaterialPalette.green.shadeDefault,
         fillColorFn: (MyRow row, _) => charts.MaterialPalette.blue.shadeDefault,
       )
@@ -158,7 +158,6 @@ class _HomeWidgetState extends State<HomeWidget> {
         side: BorderSide(color: colorPrimary, width: 1),
         borderRadius: BorderRadius.circular(10),
       ),
-      boxFit: BoxFit.cover,
       content: Column(
         children: [
           Container(
@@ -166,6 +165,14 @@ class _HomeWidgetState extends State<HomeWidget> {
             child: new charts.TimeSeriesChart(
               _getSeriesData(), 
               animate: true,
+              domainAxis: new charts.DateTimeAxisSpec(
+                tickFormatterSpec: new charts.AutoDateTimeTickFormatterSpec(
+                  day: new charts.TimeFormatterSpec(
+                    format: 'dd/MM/yy', transitionFormat: 'dd/MM/yy', 
+                  )
+                ),
+              ),
+              defaultRenderer: new charts.LineRendererConfig(includePoints: true)
             ),
           ),
           SizedBox(height: 15,),
