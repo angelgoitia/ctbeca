@@ -4,7 +4,7 @@ import 'package:ctbeca/views/player/widget/historyWidget.dart';
 import 'package:ctbeca/views/player/widget/playerWidget.dart';
 import 'package:ctbeca/views/player/widget/slpWidget.dart';
 import 'package:ctbeca/views/player/widget/homeWidget.dart';
-import 'package:ctbeca/views/widget/navbar.dart';
+import 'package:ctbeca/views/navbar/navbar.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

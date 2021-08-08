@@ -20,9 +20,11 @@ dependencies:
   dropdown_search: ^0.6.3
   flutter_localizations:
     sdk: flutter
+  fluttertoast: ^8.0.8
   get: ^4.3.0
   getwidget: ^2.0.3
   http: ^0.13.3
+  image_cropper: ^1.4.1
   shared_preferences: ^2.0.6
   url_launcher: ^6.0.9
 

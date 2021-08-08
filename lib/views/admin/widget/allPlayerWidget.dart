@@ -2,6 +2,7 @@ import 'package:ctbeca/controller/adminController.dart';
 import 'package:ctbeca/env.dart';
 
 import 'package:auto_size_text_pk/auto_size_text_pk.dart';
+import 'package:ctbeca/views/admin/detailsPlayerPage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -40,7 +41,7 @@ class _AllPlayerWidgetState extends State<AllPlayerWidget> {
         itemCount: adminController.players.length,
         itemBuilder: (BuildContext ctxt, int index) {
           return GestureDetector(
-            onTap: () => print("click"), // TODO: onTap
+            onTap: () => Get.to(DetailsPLayerPage(index), transition: Transition.rightToLeft),
             child: Container(
               margin: EdgeInsets.fromLTRB(15, 5, 15, 5),
               padding: EdgeInsets.all(15),

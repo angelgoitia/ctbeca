@@ -3,14 +3,12 @@ import 'dart:convert';
 import 'package:ctbeca/controller/adminController.dart';
 import 'package:ctbeca/controller/playerController.dart';
 import 'package:ctbeca/env.dart';
-import 'package:ctbeca/models/admin.dart';
-import 'package:ctbeca/models/player.dart';
 import 'package:ctbeca/views/loginPage.dart';
 
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:getwidget/getwidget.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -36,9 +34,14 @@ class GlobalController extends GetxController {
     DateTime now = DateTime.now();
     if (currentBackPressTime == null || now.difference(currentBackPressTime!) > Duration(seconds: 2)) {
       currentBackPressTime = now;
-      GFToast(
-        text: 'Presiona dos veces para salir de la aplicación',
-        autoDismiss: true,
+      Fluttertoast.showToast(
+        msg: 'Presiona dos veces para salir de la aplicación',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: colorPrimary,
+        textColor: Colors.white,
+        fontSize: 16.0
       );
       return Future.value(false);
     }

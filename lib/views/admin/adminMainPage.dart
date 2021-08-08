@@ -1,10 +1,11 @@
 import 'package:ctbeca/controller/globalController.dart';
 import 'package:ctbeca/env.dart';
+import 'package:ctbeca/views/admin/newPlayerPage.dart';
 import 'package:ctbeca/views/admin/widget/allHistoryWidget.dart';
 import 'package:ctbeca/views/admin/widget/allPlayerWidget.dart';
 import 'package:ctbeca/views/admin/widget/allSlpWidget.dart';
 import 'package:ctbeca/views/admin/widget/homeWidget.dart';
-import 'package:ctbeca/views/widget/navbar.dart';
+import 'package:ctbeca/views/navbar/navbar.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -100,7 +101,7 @@ class _AdminMainPageState extends State<AdminMainPage> with SingleTickerProvider
             child: Padding(
               padding: EdgeInsets.only(bottom: 80),
               child: FloatingActionButton(
-                onPressed: () {}, //TODO: agregar
+                onPressed: () => Get.to(NewPlayerPage(), transition: Transition.zoom),
                 child: const Icon(Icons.add),
                 backgroundColor: colorPrimary,
               )
