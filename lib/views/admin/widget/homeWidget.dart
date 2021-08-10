@@ -25,11 +25,11 @@ class _HomeWidgetState extends State<HomeWidget> {
 
   AdminController adminController = Get.put(AdminController());
 
-  _getSeriesData() {
+  _getSeriesData(data) {
     List<charts.Series<MyRow, DateTime>> series = [
       charts.Series<MyRow, DateTime>(
         id: 'Amount',
-        data: adminController.dataGraphic,
+        data: data.value,
         domainFn: (MyRow row, _) => row.timeStamp,
         measureFn: (MyRow row, _) => row.amount,
         colorFn: (MyRow row, _) => charts.MaterialPalette.green.shadeDefault,
@@ -160,20 +160,22 @@ class _HomeWidgetState extends State<HomeWidget> {
       ),
       content: Column(
         children: [
-          Container(
-            height: 350,
-            child: new charts.TimeSeriesChart(
-              _getSeriesData(), 
-              animate: true,
-              domainAxis: new charts.DateTimeAxisSpec(
-                tickFormatterSpec: new charts.AutoDateTimeTickFormatterSpec(
-                  day: new charts.TimeFormatterSpec(
-                    format: 'dd/MM/yy', transitionFormat: 'dd/MM/yy', 
-                  )
+          Obx(
+            () => Container(
+              height: 350,
+              child: new charts.TimeSeriesChart(
+                _getSeriesData(adminController.dataGraphic), 
+                animate: true,
+                domainAxis: new charts.DateTimeAxisSpec(
+                  tickFormatterSpec: new charts.AutoDateTimeTickFormatterSpec(
+                    day: new charts.TimeFormatterSpec(
+                      format: 'dd/MM/yy', transitionFormat: 'dd/MM/yy', 
+                    )
+                  ),
                 ),
+                defaultRenderer: new charts.LineRendererConfig(includePoints: true)
               ),
-              defaultRenderer: new charts.LineRendererConfig(includePoints: true)
-            ),
+            )
           ),
           SizedBox(height: 15,),
           Row(

@@ -101,7 +101,7 @@ class _AdminMainPageState extends State<AdminMainPage> with SingleTickerProvider
             child: Padding(
               padding: EdgeInsets.only(bottom: 80),
               child: FloatingActionButton(
-                onPressed: () => Get.to(NewPlayerPage(), transition: Transition.zoom),
+                onPressed: () => Get.to(() => NewPlayerPage(-1), transition: Transition.zoom),
                 child: const Icon(Icons.add),
                 backgroundColor: colorPrimary,
               )

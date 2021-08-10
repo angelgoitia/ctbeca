@@ -89,7 +89,7 @@ class AdminController extends GetxController {
           MyRow(dateLastSixDays, 0)
         );
     } 
-
+    
     return true;
   }
 }

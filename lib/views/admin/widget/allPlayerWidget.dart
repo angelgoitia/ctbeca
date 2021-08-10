@@ -41,7 +41,7 @@ class _AllPlayerWidgetState extends State<AllPlayerWidget> {
         itemCount: adminController.players.length,
         itemBuilder: (BuildContext ctxt, int index) {
           return GestureDetector(
-            onTap: () => Get.to(DetailsPLayerPage(index), transition: Transition.rightToLeft),
+            onTap: () => Get.to(() => DetailsPLayerPage(index), transition: Transition.rightToLeft),
             child: Container(
               margin: EdgeInsets.fromLTRB(15, 5, 15, 5),
               padding: EdgeInsets.all(15),

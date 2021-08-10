@@ -1,5 +1,6 @@
 import 'package:ctbeca/controller/adminController.dart';
 import 'package:ctbeca/env.dart';
+import 'package:ctbeca/views/admin/newPlayerPage.dart';
 
 import 'package:auto_size_text_pk/auto_size_text_pk.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -42,6 +43,21 @@ class _DetailsPLayerPageState extends State<DetailsPLayerPage> {
             onPressed: () => Get.back(),
             type: GFButtonType.transparent,
           ),
+          actions: [
+            GFButton(
+              onPressed: (){
+                Get.back();
+                Get.to(() => NewPlayerPage(index));
+              },
+              text: "Modificar",
+              color: colorPrimary,
+              icon: Icon(
+                Icons.edit,
+                color: colorPrimary,
+              ),
+              type: GFButtonType.transparent,
+            ),
+          ],
           centerTitle: true,
           title: Text(
             "Becado",
@@ -322,6 +338,57 @@ class _DetailsPLayerPageState extends State<DetailsPLayerPage> {
                         ),
                       ),
                     ), 
+                  ),
+
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(5, 10, 5, 5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: AutoSizeText.rich(
+                            TextSpan(
+                              text: 'Usuario: ',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                                fontFamily: 'MontserratBold',
+                              ),
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: adminController.players[index].user,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.normal,
+                                    fontFamily: 'MontserratMedium',
+                                  ),
+                                ),
+                              ],
+                            ),
+                            maxFontSize: 14,
+                            minFontSize: 14,
+                          )
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            Icons.copy,
+                            color: colorPrimary,
+                          ), 
+                          tooltip: "Copiar Usuario",
+                          onPressed: () => Clipboard.setData(ClipboardData(text: adminController.players[index].user)).then((result) {
+                            Fluttertoast.showToast(
+                              msg: "Usuario Copiado!",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: colorPrimary,
+                              textColor: Colors.white,
+                              fontSize: 16.0
+                            );
+                          }),
+                        ),
+                      ],
+                    )
                   ),
 
                   Padding(

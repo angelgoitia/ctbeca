@@ -7,12 +7,16 @@ import 'package:get/get.dart';
 import 'package:getwidget/getwidget.dart';
 
 class NewPlayerPage extends StatefulWidget {
+  final int index;
+  NewPlayerPage(this.index);
 
   @override
-  _NewPlayerPageState createState() => _NewPlayerPageState();
+  _NewPlayerPageState createState() => _NewPlayerPageState(index);
 }
 
 class _NewPlayerPageState extends State<NewPlayerPage> {
+  final int index;
+  _NewPlayerPageState(this.index);
 
   AdminController adminController = Get.put(AdminController());
 
@@ -40,7 +44,7 @@ class _NewPlayerPageState extends State<NewPlayerPage> {
             ),
           ),
         ),
-        body: FormWidget(),
+        body: FormWidget(index),
       )
     );
   }
