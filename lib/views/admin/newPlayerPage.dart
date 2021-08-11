@@ -41,6 +41,7 @@ class _NewPlayerPageState extends State<NewPlayerPage> {
             "Nuevo Becado",
             style: TextStyle(
               color: colorPrimary,
+              fontFamily: 'MontserratSemiBold',
             ),
           ),
         ),

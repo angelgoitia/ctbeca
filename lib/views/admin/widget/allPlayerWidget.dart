@@ -79,7 +79,7 @@ class _AllPlayerWidgetState extends State<AllPlayerWidget> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     AutoSizeText(
-                      getLastSlp(adminController.players[index].listSlp, adminController.players[index].listSlp!.length ),
+                      getLastSlp(adminController.players[index].listSlp, adminController.players[index].listSlp!.length ).toString(),
                       style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.w700,
@@ -103,7 +103,8 @@ class _AllPlayerWidgetState extends State<AllPlayerWidget> {
   }
 
   getLastSlp(listSlp, listLenght){
+    if(listLenght == 0) return 0;
 
-    return listSlp[listLenght-1].total.toString();
+    return listSlp[listLenght-1].total;
   }
 }

@@ -25,6 +25,7 @@ class _HomeWidgetState extends State<HomeWidget> {
 
   AdminController adminController = Get.put(AdminController());
 
+
   _getSeriesData(data) {
     List<charts.Series<MyRow, DateTime>> series = [
       charts.Series<MyRow, DateTime>(
@@ -116,7 +117,10 @@ class _HomeWidgetState extends State<HomeWidget> {
     switch (index) {
       case 0:
         for (var player in players) {
-          DateTime dateList = DateTime.parse(player.listSlp![player.listSlp!.length -1].createdAt!);
+
+          if(player.listSlp!.length >0) break;
+
+          DateTime dateList = DateTime.parse(player.listSlp![player.listSlp!.length -1].date!);
           if(dateList.day == now.day && dateList.month == now.month && dateList.year == now.year){
             totalSLP += player.listSlp![player.listSlp!.length -1].daily!.toInt();
           } 
@@ -126,7 +130,7 @@ class _HomeWidgetState extends State<HomeWidget> {
         final yesterdays = DateTime.now().subtract(Duration(days:1));
         for (var player in players) {
           for (var item in player.listSlp!) {
-            DateTime dateList = DateTime.parse(item.createdAt!);
+            DateTime dateList = DateTime.parse(item.date!);
             if(dateList.day == yesterdays.day && dateList.month == yesterdays.month && dateList.year == yesterdays.year){
               totalSLP += item.daily!.toInt();
               break;
@@ -139,7 +143,7 @@ class _HomeWidgetState extends State<HomeWidget> {
         final dateLastSixDays = DateTime.now().subtract(Duration(days:6));
         for (var player in players) {
           for (var item in player.listSlp!) {
-            DateTime dateList = DateTime.parse(item.createdAt!);
+            DateTime dateList = DateTime.parse(item.date!);
             if(dateLastSixDays.isBefore(dateList) && _lastDay.isAfter(dateList)){
               totalSLP += item.daily!.toInt();
             }

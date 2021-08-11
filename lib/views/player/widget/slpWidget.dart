@@ -87,7 +87,7 @@ class _SlpWidgetState extends State<SlpWidget> {
         playerController.player.value.listSlp!.length == 0? 
           Center(
             child: AutoSizeText(
-              "No hay lista de becados con Slp",
+              "No se ha generado la lista",
               style: TextStyle(
                 color: Colors.black87,
                 fontWeight:  FontWeight.normal,
@@ -105,78 +105,75 @@ class _SlpWidgetState extends State<SlpWidget> {
               shrinkWrap: true,
               itemCount: playerController.player.value.listSlp!.length,
               itemBuilder: (BuildContext ctxt, int index) {
-                return GestureDetector(
-                  onTap: () => print("click"), // TODO: onTap
-                  child: Container(
-                    margin: EdgeInsets.fromLTRB(15, 5, 15, 5),
-                    padding: EdgeInsets.all(15),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(5.0) 
-                      ),
-                      border: Border.all(
-                        color: Colors.black,
-                        width: 1.0,
-                      )
+                return Container(
+                  margin: EdgeInsets.fromLTRB(15, 5, 15, 5),
+                  padding: EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(5.0) 
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        AutoSizeText(
-                          formatter.format((formatterBD.parse(playerController.player.value.listSlp![index].createdAt!))).toString(),
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.black87,
-                            fontWeight:  FontWeight.normal,
-                            fontFamily: 'MontserratSemiBold',
-                          ),
-                          minFontSize: 14,
-                          maxFontSize: 14,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            AutoSizeText(
-                              playerController.player.value.listSlp![index].total!.toString(),
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.black87,
-                                fontWeight:  FontWeight.normal,
-                                fontFamily: 'MontserratSemiBold',
-                              ),
-                              minFontSize: 14,
-                              maxFontSize: 14,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 5),
-                              child: Image.asset("assets/icons/SLP.png", width: size.width / 15,),
-                            )
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            AutoSizeText(
-                              playerController.player.value.listSlp![index].daily.toString(),
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.black87,
-                                fontWeight:  FontWeight.normal,
-                                fontFamily: 'MontserratSemiBold',
-                              ),
-                              minFontSize: 14,
-                              maxFontSize: 14,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 5),
-                              child: Image.asset("assets/icons/SLP.png", width: size.width / 15,),
-                            )
-                          ],
-                        ),
-                      ],
+                    border: Border.all(
+                      color: Colors.black,
+                      width: 1.0,
                     )
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      AutoSizeText(
+                        formatter.format((formatterBD.parse(playerController.player.value.listSlp![index].createdAt!))).toString(),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontWeight:  FontWeight.normal,
+                          fontFamily: 'MontserratSemiBold',
+                        ),
+                        minFontSize: 14,
+                        maxFontSize: 14,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          AutoSizeText(
+                            playerController.player.value.listSlp![index].total!.toString(),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontWeight:  FontWeight.normal,
+                              fontFamily: 'MontserratSemiBold',
+                            ),
+                            minFontSize: 14,
+                            maxFontSize: 14,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 5),
+                            child: Image.asset("assets/icons/SLP.png", width: size.width / 15,),
+                          )
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          AutoSizeText(
+                            playerController.player.value.listSlp![index].daily.toString(),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontWeight:  FontWeight.normal,
+                              fontFamily: 'MontserratSemiBold',
+                            ),
+                            minFontSize: 14,
+                            maxFontSize: 14,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 5),
+                            child: Image.asset("assets/icons/SLP.png", width: size.width / 15,),
+                          )
+                        ],
+                      ),
+                    ],
                   )
                 );
               }

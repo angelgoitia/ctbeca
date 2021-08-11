@@ -38,20 +38,18 @@ class PlayerController extends GetxController {
 
         if (jsonResponse['statusCode'] == 201) {
 
-          String? accessToken = player.value.accessToken;
           player.value = new Player.fromJson(jsonResponse['player']);
-          player.value.accessToken = accessToken;
-
+          globalController.dbctbeca.createOrUpdatePlayer(player.value);
           await getDataGraphic();
 
-          Get.off(PlayerMainPage());
+          Get.off(() => PlayerMainPage());
 
         } else{
           globalController.removeVariable();
         }  
       }
     } on SocketException catch (_) {
-      //TODO: consultar BD        
+      player.value = await globalController.dbctbeca.getPlayer(player.value.accessToken);
     } 
   }
 
@@ -60,7 +58,7 @@ class PlayerController extends GetxController {
       final dateLastSixDays = i == 1? DateTime.now() : DateTime.now().subtract(Duration(days:i-1));
       var statusForeach = false;
       for (var item in player.value.listSlp!) {
-        DateTime dateList = DateTime.parse(item.createdAt!);
+        DateTime dateList = DateTime.parse(item.date!);
         if(dateList.day == dateLastSixDays.day && dateList.month == dateLastSixDays.month && dateList.year == dateLastSixDays.year){
           statusForeach = true;
           dataGraphic.add(

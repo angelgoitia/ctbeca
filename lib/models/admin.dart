@@ -3,9 +3,11 @@ class Admin{
 
   Admin({this.accessToken, this.tokenFCM,});
 
-  Admin.fromJson(Map<String, dynamic> json) {
-    accessToken = json['access_token'];
-    tokenFCM = json['tokenFCM'];
+  factory  Admin.fromJson(Map<String, dynamic> json) {
+    return new Admin(
+      accessToken : json['accessToken'],
+      tokenFCM : json['tokenFCM'],
+    );
   }
 
 }

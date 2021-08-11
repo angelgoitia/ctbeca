@@ -1,21 +1,22 @@
-import 'dart:convert';
-
 import 'package:ctbeca/controller/adminController.dart';
 import 'package:ctbeca/controller/playerController.dart';
+import 'package:ctbeca/dataBase/database.dart';
 import 'package:ctbeca/env.dart';
 import 'package:ctbeca/views/loginPage.dart';
 
-import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GlobalController extends GetxController { 
   final indexSelect = 0.obs;
   final indexController = 0.obs; 
   DateTime? currentBackPressTime; 
+  DBctbeca dbctbeca = DBctbeca();
 
   AdminController adminController = Get.put(AdminController());
   PlayerController playerController = Get.put(PlayerController());
@@ -25,7 +26,8 @@ class GlobalController extends GetxController {
     indexSelect.value = index;
   }
 
-  changeIndexController(int index){
+  changeIndexController(int index)
+  {
     indexController.value = index;
   }
 
@@ -77,13 +79,21 @@ class GlobalController extends GetxController {
           removeVariable();
 
         } else{
+
           Get.back();
           showMessage("intentalo de nuevo mas tardes!", false);
+          await Future.delayed(Duration(seconds: 1));
+          Get.back();
+          
         }  
       }
     } on SocketException catch (_) {
+
       Get.back();
-      showMessage("intentalo de nuevo mas tardes!", false);     
+      showMessage("intentalo de nuevo mas tardes!", false);   
+      await Future.delayed(Duration(seconds: 1));
+      Get.back();  
+
     }  
 
   }
@@ -92,7 +102,7 @@ class GlobalController extends GetxController {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove("access_token");
     prefs.remove("type");
-    Get.off(LoginPage(), transition: Transition.zoom);
+    Get.off(() => LoginPage(), transition: Transition.zoom);
   }
 
   loading(){
@@ -159,7 +169,7 @@ class GlobalController extends GetxController {
             padding: EdgeInsets.all(5),
             child: Icon(
               Icons.check_circle,
-              color: colorPrimary,
+              color: Colors.green,
               size: 30,
             )
           )

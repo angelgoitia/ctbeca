@@ -14,7 +14,7 @@ class MainController extends GetxController {
     super.onReady();
     passVariable();
     /* Future.delayed(Duration(seconds:2), (){
-      Get.off(LoginPage(), transition: Transition.zoom);
+      Get.off(() => LoginPage(), transition: Transition.zoom);
     }); */
   }
 
@@ -41,7 +41,7 @@ class MainController extends GetxController {
     }else{
 
       Future.delayed(Duration(seconds:2), (){
-        Get.off(LoginPage(), transition: Transition.zoom);
+        Get.off(() => LoginPage(), transition: Transition.zoom);
       });
       
     }

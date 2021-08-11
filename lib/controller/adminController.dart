@@ -42,24 +42,27 @@ class AdminController extends GetxController {
             'authorization': 'Bearer ${admin.value.accessToken}',
           },
         ); 
-
+        print("token: ${admin.value.accessToken}");
         print(response.body);
         jsonResponse = jsonDecode(response.body);
 
         if (jsonResponse['statusCode'] == 201) {
-
+          
+          String? accessToken = admin.value.accessToken;
+          admin.value = new Admin.fromJson(jsonResponse['admin']);
+          admin.value.accessToken = accessToken;
           players.value = (jsonResponse['players'] as List).map((val) => Player.fromJson(val)).toList();
-
+          globalController.dbctbeca.createOrUpdateListPlayer(players);
           await getDataGraphic();
-
-          Get.off(AdminMainPage());
+          Get.off(() => AdminMainPage());
 
         } else{
           globalController.removeVariable();
         }  
       }
     } on SocketException catch (_) {
-      //TODO: consultar BD        
+      admin.value = await globalController.dbctbeca.getAdmin();
+      players.value = await globalController.dbctbeca.getPlayers();
     } 
   }
 
@@ -71,7 +74,7 @@ class AdminController extends GetxController {
       int totalSlp = 0;
       for (var player in players) {
         for (var item in player.listSlp!) {
-          DateTime dateList = DateTime.parse(item.createdAt!);
+          DateTime dateList = DateTime.parse(item.date!);
           if(dateList.day == dateLastSixDays.day && dateList.month == dateLastSixDays.month && dateList.year == dateLastSixDays.year){
             statusForeach = true;
             totalSlp += item.daily!;

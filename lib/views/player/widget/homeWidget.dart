@@ -121,7 +121,7 @@ class _HomeWidgetState extends State<HomeWidget> {
 
     switch (index) {
       case 0:
-        DateTime dateList = DateTime.parse(listSlp[listSlp.length -1].createdAt!);
+        DateTime dateList = DateTime.parse(listSlp[listSlp.length -1].date!);
         if(dateList.day == now.day && dateList.month == now.month && dateList.year == now.year){
           totalSLP += listSlp[listSlp.length -1].daily!.toInt();
         }
@@ -129,7 +129,7 @@ class _HomeWidgetState extends State<HomeWidget> {
       case 1:
         final yesterdays = DateTime.now().subtract(Duration(days:1));
         for (var item in listSlp) {
-          DateTime dateList = DateTime.parse(item.createdAt!);
+          DateTime dateList = DateTime.parse(item.date!);
           if(dateList.day == yesterdays.day && dateList.month == yesterdays.month && dateList.year == yesterdays.year){
             totalSLP += item.daily!.toInt();
             break;
@@ -141,7 +141,7 @@ class _HomeWidgetState extends State<HomeWidget> {
         final dateLastSixDays = DateTime.now().subtract(Duration(days:6));
         
         for (var item in listSlp) {
-          DateTime dateList = DateTime.parse(item.createdAt!);
+          DateTime dateList = DateTime.parse(item.date!);
           if(dateLastSixDays.isBefore(dateList) && _lastDay.isAfter(dateList)){
             totalSLP += item.daily!.toInt();
           }

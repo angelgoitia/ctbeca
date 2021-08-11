@@ -51,6 +51,7 @@ class LoginController extends GetxController {
   }
 
   formSubmit(emailWallet, password)async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     GlobalController globalController = Get.put(GlobalController());
     AdminController adminController = Get.put(AdminController());
     PlayerController playerController = Get.put(PlayerController());
@@ -83,13 +84,13 @@ class LoginController extends GetxController {
           if (jsonResponse['statusCode'] == 201) {
 
             statusError.value = false;
-            SharedPreferences prefs = await SharedPreferences.getInstance();
             prefs.setString('access_token', jsonResponse['access_token']);
             prefs.setInt('type',0);
             adminController.admin.value = new Admin.fromJson(jsonResponse);
             adminController.players.value = (jsonResponse['players'] as List).map((val) => Player.fromJson(val)).toList();
+            globalController.dbctbeca.createOrUpdateAdmin(adminController.admin.value);
             Get.back();
-            Get.off(AdminMainPage());
+            Get.off(() => AdminMainPage());
 
           } else if(jsonResponse['statusCode'] == 400){
 
@@ -104,6 +105,7 @@ class LoginController extends GetxController {
           }  
         }
       } on SocketException catch (_) {
+        
         statusError.value = true;
         messageError.value = "Sin conexión, inténtalo de nuevo mas tarde";
         
@@ -133,13 +135,14 @@ class LoginController extends GetxController {
           if (jsonResponse['statusCode'] == 201) {
 
             statusError.value = false;
-            SharedPreferences prefs = await SharedPreferences.getInstance();
             prefs.setString('access_token', jsonResponse['access_token']);
             prefs.setInt('type',1);
             playerController.player.value = new Player.fromJson(jsonResponse['player']);
             playerController.player.value.accessToken = jsonResponse['access_token'];
+            globalController.dbctbeca.createOrUpdatePlayer(playerController.player.value);
+
             Get.back();
-            Get.off(PlayerMainPage());
+            Get.off(() => PlayerMainPage());
             
           } else if(jsonResponse['statusCode'] == 400){
 

@@ -47,6 +47,7 @@ class _FormWidgetState extends State<FormWidget> {
   void initState() {
     super.initState();
     _phoneController.text = index >= 0? adminController.players[index].phone!.substring(5) : '';
+    formController.player.value.wallet  = index >= 0? adminController.players[index].wallet! : '';
   }
 
   @override
@@ -215,7 +216,7 @@ class _FormWidgetState extends State<FormWidget> {
               child: new TextFormField(
                 initialValue: index >= 0? adminController.players[index].telegram : '',
                 maxLines: 1,
-                keyboardType: TextInputType.emailAddress,
+                keyboardType: TextInputType.text,
                 autofocus: false,
                 inputFormatters: [
                   FilteringTextInputFormatter.deny(new RegExp(r"\s\b|\b\s"))
@@ -229,6 +230,7 @@ class _FormWidgetState extends State<FormWidget> {
                     fontFamily: 'MontserratSemiBold',
                     fontSize: 14,
                   ),
+                  hintText: "@JoeDoe",
                   icon: Image.asset("assets/icons/telegramBlack.png", width: 20, color: colorPrimary,),
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: colorPrimary),
@@ -250,7 +252,7 @@ class _FormWidgetState extends State<FormWidget> {
               child: new TextFormField(
                 maxLines: 1,
                 initialValue: index >= 0? adminController.players[index].email : '',
-                keyboardType: TextInputType.text,
+                keyboardType: TextInputType.emailAddress,
                 inputFormatters: [
                   FilteringTextInputFormatter.deny(new RegExp(r"\s\b|\b\s"))
                 ],
@@ -336,40 +338,70 @@ class _FormWidgetState extends State<FormWidget> {
 
             Padding(
               padding: const EdgeInsets.fromLTRB(30.0, 20.0, 30.0, 0.0),
-              child: new TextFormField(
-                maxLines: 1,
-                initialValue: index >= 0? adminController.players[index].wallet : '',
-                keyboardType: TextInputType.text,
-                autofocus: false,
-                inputFormatters: [
-                  FilteringTextInputFormatter.deny(new RegExp(r"\s\b|\b\s"))
-                ],
-                focusNode: _walletFocus,
-                onEditingComplete: () => FocusScope.of(context).requestFocus(_codeQrFocus), 
-                decoration: new InputDecoration(
-                  labelText: "Billetera",
-                  labelStyle: TextStyle(
-                    color: colorPrimary,
+              child: 
+
+              index>=0? 
+
+                AutoSizeText.rich(
+                  TextSpan(
+                    text: 'Billetera: ',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      fontFamily: 'MontserratBold',
+                    ),
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: "ronin:${adminController.players[index].wallet}",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.normal,
+                          fontFamily: 'MontserratMedium',
+                        ),
+                      ),
+                    ],
+                  ),
+                  maxFontSize: 14,
+                  minFontSize: 14,
+                )
+
+              :
+
+                new TextFormField(
+                  maxLines: 1,
+                  initialValue: index >= 0? adminController.players[index].wallet : '',
+                  keyboardType: TextInputType.text,
+                  autofocus: false,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.deny(new RegExp(r"\s\b|\b\s"))
+                  ],
+                  focusNode: _walletFocus,
+                  onEditingComplete: () => FocusScope.of(context).requestFocus(_codeQrFocus), 
+                  decoration: new InputDecoration(
+                    labelText: "Billetera",
+                    labelStyle: TextStyle(
+                      color: colorPrimary,
+                      fontFamily: 'MontserratSemiBold',
+                      fontSize: 14,
+                    ),
+                    icon: Icon(
+                      Icons.account_balance_wallet,
+                      color: colorPrimary,
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: colorPrimary),
+                    ),
+                  ),
+                  validator: (value) => value!.trim().length >=20? null : 'Ingrese una Billetera válido',
+                  onSaved: (value) => formController.player.value.wallet = value!.trim(),
+                  textInputAction: TextInputAction.next ,
+                  cursorColor: colorPrimary,
+                  style: TextStyle(
                     fontFamily: 'MontserratSemiBold',
                     fontSize: 14,
                   ),
-                  icon: Icon(
-                    Icons.account_balance_wallet,
-                    color: colorPrimary,
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: colorPrimary),
-                  ),
+                  readOnly: index >= 0,
                 ),
-                validator: (value) => value!.trim().length >=20? null : 'Ingrese una Billetera válido',
-                onSaved: (value) => formController.player.value.wallet = value!.trim(),
-                textInputAction: TextInputAction.next ,
-                cursorColor: colorPrimary,
-                style: TextStyle(
-                  fontFamily: 'MontserratSemiBold',
-                  fontSize: 14,
-                ),
-              ),
             ),
             
             Obx(
@@ -535,7 +567,7 @@ class _FormWidgetState extends State<FormWidget> {
                   ),
                 ),
                 validator: (value) => formController.validarEmail(value!)? null : 'Ingrese un Correo Electrónico válido',
-                onSaved: (value) => formController.player.value.email = value!.trim(),
+                onSaved: (value) => formController.player.value.emailGame = value!.trim(),
                 textInputAction: TextInputAction.next ,
                 cursorColor: colorPrimary,
                 style: TextStyle(
@@ -587,7 +619,7 @@ class _FormWidgetState extends State<FormWidget> {
                   textInputAction: TextInputAction.done,
                   onFieldSubmitted: (term){
                     FocusScope.of(context).requestFocus(new FocusNode()); 
-                    tapSubmit();
+                    tapSubmit(index);
                   },
                   cursorColor: colorPrimary,
                   style: TextStyle(
@@ -610,7 +642,7 @@ class _FormWidgetState extends State<FormWidget> {
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(new FocusNode()); 
-        tapSubmit();
+        tapSubmit(index);
       },
       child: Padding(
         padding: const EdgeInsets.fromLTRB(30.0, 20.0, 30.0, 30.0),
@@ -646,26 +678,6 @@ class _FormWidgetState extends State<FormWidget> {
         )
       ),
     );
-  }
-
-  void tapSubmit(){
-
-    if(index < 0 && !formController.imageSelect.value)
-      formController.statusSubmit.value = true;
-    else 
-      formController.statusSubmit.value = false;
-
-    if("${formController.digitsPhone.value}-${_phoneController.text.trim()}".length != 12)
-      formController.statusErrorPhone.value = true;
-    else
-      formController.statusErrorPhone.value = false;
-    
-    if(_formKeyNewPlayer.currentState!.validate()){
-      _formKeyNewPlayer.currentState!.save();
-      formController.statusErrorPhone.value = false;
-      _passwordController.clear();
-      print("entro form");
-    } 
   }
 
   Future<void> _showSelectionDialog(BuildContext context) {
@@ -755,6 +767,26 @@ class _FormWidgetState extends State<FormWidget> {
 
       }
     }
+  }
+
+  void tapSubmit(index){
+
+    if(index < 0 && !formController.imageSelect.value)
+      formController.statusSubmit.value = true;
+    else 
+      formController.statusSubmit.value = false;
+
+    if("${formController.digitsPhone.value}-${_phoneController.text.trim()}".length != 12)
+      formController.statusErrorPhone.value = true;
+    else
+      formController.statusErrorPhone.value = false;
+    
+    if(_formKeyNewPlayer.currentState!.validate()){
+      _formKeyNewPlayer.currentState!.save();
+      formController.statusErrorPhone.value = false;
+      _passwordController.clear();
+      formController.submitForm(index);
+    } 
   }
 
 }

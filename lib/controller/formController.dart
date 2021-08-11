@@ -47,7 +47,7 @@ class FormController extends GetxController {
     return false; 
   }
 
-  submitForm(index, status) async {
+  submitForm(index) async {
     GlobalController globalController = Get.put(GlobalController());
     AdminController adminController = Get.put(AdminController());
     
@@ -56,28 +56,32 @@ class FormController extends GetxController {
     globalController.loading();
 
     try {
+      var phone = player.value.phone!.split("-");
+
       result = await InternetAddress.lookup('google.com'); //verify network
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-
         response = await http.post(
           Uri.parse(urlApi+"formPlayer/"),
           headers:{
             'Accept': 'application/json',
             'Content-Type': 'application/json',
             'X-Requested-With': 'XMLHttpRequest',
+            'authorization': 'Bearer ${adminController.admin.value.accessToken}',
           },
           body: jsonEncode({
             'statusApi': true,
-            'playerSelect': player,
+            'playerSelect': index < 0 ? null : player.toJson(),
             'name': player.value.name,
-            'phone': player.value.phone,
+            'digPhone': phone[0],
+            'phone': phone[1],
             'telegram': player.value.telegram,
             'email': player.value.email,
             'reference': player.value.reference,
             'wallet': player.value.wallet,
+            'user': player.value.user,
             'emailGame': player.value.emailGame,
             'passwordGame': player.value.passwordGame,
-            'urlPrevius': status? adminController.players[index].urlCodeQr : null,
+            'urlPrevius': index >= 0 && imageSelect.value? adminController.players[index].urlCodeQr : null,
             'image': player.value.urlCodeQr,
           }),
         ); // petición api
@@ -86,19 +90,29 @@ class FormController extends GetxController {
 
         if (jsonResponse['statusCode'] == 201) {
 
+          await adminController.getAdmin();
           Get.back();
           Get.back();
           globalController.showMessage("Ha sido Guardado correctamente!", true);
+          await Future.delayed(Duration(seconds: 1));
+          Get.back();
 
         } else if(jsonResponse['statusCode'] == 400){
 
-          statusError.value = true;
-          messageError.value = jsonResponse['message'];
+          Get.back();
+          globalController.showMessage(jsonResponse['message'], false);
+          await Future.delayed(Duration(seconds: 1));
+          Get.back();
 
         } 
       }
     } on SocketException catch (_) {
+
+      Get.back();
       globalController.showMessage("Sin conexión a internet", false); 
+      await Future.delayed(Duration(seconds: 1));
+      Get.back();
+
     } 
 
       

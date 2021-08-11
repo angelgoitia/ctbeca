@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:getwidget/getwidget.dart';
 
 class PLayerWidget extends StatefulWidget {
   
@@ -423,7 +424,179 @@ class _PLayerWidgetState extends State<PLayerWidget> {
               
             ],
           )
-        )
+        ),
+
+        Container(
+          margin: EdgeInsets.all(15),
+          padding: EdgeInsets.all(15),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(
+              Radius.circular(5.0) 
+            ),
+            border: Border.all(
+              color: Colors.grey,
+              width: 1.0,
+            ),
+            boxShadow: [
+              new BoxShadow(
+                color: Color(0xffA4A4A4),
+                offset: Offset(1.0, 5.0),
+                blurRadius: 3.0,
+              ),
+            ]
+          ),
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.fromLTRB(5, 20, 5, 5),
+                alignment: Alignment.center,
+                child: AutoSizeText(
+                  "Axies",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.normal,
+                    fontFamily: 'MontserratBold',
+                  ),
+                  maxFontSize: 18,
+                  minFontSize: 18,
+                ),
+              ),
+              
+              playerController.player.value.listAnimals!.length == 0 ?  
+
+                Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Center(
+                    child: AutoSizeText(
+                      "No tiene Axie",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.normal,
+                        fontFamily: 'MontserratMedium',
+                      ),
+                      maxFontSize: 18,
+                      minFontSize: 18,
+                    ),
+                  ),
+                )
+
+              :
+                ListView.builder(
+                  physics: NeverScrollableScrollPhysics(),
+                  padding: EdgeInsets.zero,
+                  shrinkWrap: true,
+                  itemCount: playerController.player.value.listAnimals!.length,
+                  itemBuilder: (BuildContext ctxt, int indexList) {
+                    return Container(
+                      margin: EdgeInsets.all(15),
+                      padding: EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(5.0) 
+                        ),
+                        border: Border.all(
+                          color: Colors.grey,
+                          width: 1.0,
+                        ),
+                        boxShadow: [
+                          new BoxShadow(
+                            color: Color(0xffA4A4A4),
+                            offset: Offset(1.0, 5.0),
+                            blurRadius: 3.0,
+                          ),
+                        ]
+                      ),
+                      child: Column(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: backgroundAxies,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(5.0) 
+                              ),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: new BorderRadius.circular(10.0), 
+                              child: CachedNetworkImage(
+                                imageUrl: playerController.player.value.listAnimals![indexList].image!,
+                                placeholder: (context, url) => CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(colorPrimary)),
+                                errorWidget: (context, url, error) => Icon(Icons.error),
+                                fit: BoxFit.fill,              
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Center(
+                              child: AutoSizeText(
+                                playerController.player.value.listAnimals![indexList].name!,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.normal,
+                                  fontFamily: 'MontserratBold',
+                                ),
+                                maxFontSize: 18,
+                                minFontSize: 18,
+                              ),
+                            )
+                          ),
+                          GFListTile(
+                            padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                            title: AutoSizeText.rich(
+                              TextSpan(
+                                text: 'Código: ',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                  fontFamily: 'MontserratBold',
+                                ),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: playerController.player.value.listAnimals![indexList].code,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.normal,
+                                      fontFamily: 'MontserratMedium',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              maxFontSize: 14,
+                              minFontSize: 14,
+                            ),
+                            subTitle: AutoSizeText.rich(
+                              TextSpan(
+                                text: 'Nomenclatura: ',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                  fontFamily: 'MontserratBold',
+                                ),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: playerController.player.value.listAnimals![indexList].nomenclature,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.normal,
+                                      fontFamily: 'MontserratMedium',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              maxFontSize: 14,
+                              minFontSize: 14,
+                            ),
+                          ),
+                        ],
+                      )
+                    );
+                  }
+                ),
+            ],
+          )
+        ),
       ],
     );
   }
