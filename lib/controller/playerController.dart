@@ -16,9 +16,12 @@ class PlayerController extends GetxController {
   final dataGraphic = <MyRow>[].obs;
   final histories = <History>[].obs;
   
-  getPlayer() async {
+  getPlayer(bool loading) async {
     GlobalController globalController = Get.put(GlobalController());
     var result, response, jsonResponse;
+
+    if(loading)
+      globalController.loading();
     
     try {
       result = await InternetAddress.lookup('google.com'); //verify network
@@ -38,22 +41,36 @@ class PlayerController extends GetxController {
 
         if (jsonResponse['statusCode'] == 201) {
 
+          String? accessToken = player.value.accessToken;
           player.value = new Player.fromJson(jsonResponse['player']);
+          player.value.accessToken = accessToken;
           globalController.dbctbeca.createOrUpdatePlayer(player.value);
           await getDataGraphic();
-
           Get.off(() => PlayerMainPage());
 
-        } else{
+        } else
           globalController.removeVariable();
-        }  
+
+        if(loading)
+          Get.back();
       }
     } on SocketException catch (_) {
-      player.value = await globalController.dbctbeca.getPlayer(player.value.accessToken);
+
+      if(loading){
+        Get.back();
+        globalController.showMessage("Sin conexión a internet", false); 
+        await Future.delayed(Duration(seconds: 1));
+        Get.back();
+      }else{
+        player.value = await globalController.dbctbeca.getPlayer(player.value.accessToken);
+        Get.off(() => PlayerMainPage());
+      }
+
     } 
   }
 
-  getDataGraphic(){
+  Future getDataGraphic() async {
+    dataGraphic.value = <MyRow>[];
     for( var i = 6 ; i >= 1; i-- ) { 
       final dateLastSixDays = i == 1? DateTime.now() : DateTime.now().subtract(Duration(days:i-1));
       var statusForeach = false;

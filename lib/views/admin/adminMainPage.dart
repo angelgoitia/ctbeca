@@ -1,3 +1,4 @@
+import 'package:ctbeca/controller/adminController.dart';
 import 'package:ctbeca/controller/globalController.dart';
 import 'package:ctbeca/env.dart';
 import 'package:ctbeca/views/admin/newPlayerPage.dart';
@@ -22,6 +23,7 @@ class _AdminMainPageState extends State<AdminMainPage> with SingleTickerProvider
   TabController? tabController;
 
   GlobalController globalController = Get.put(GlobalController());
+  AdminController adminController = Get.put(AdminController());
 
   @override
   void initState() {
@@ -97,12 +99,18 @@ class _AdminMainPageState extends State<AdminMainPage> with SingleTickerProvider
         ),
         floatingActionButton: Obx(
           () => Visibility(
-            visible: globalController.indexController.value == 1? true : false,
+            visible: globalController.indexController.value <= 1? true : false,
             child: Padding(
               padding: EdgeInsets.only(bottom: 80),
               child: FloatingActionButton(
-                onPressed: () => Get.to(() => NewPlayerPage(-1), transition: Transition.zoom),
-                child: const Icon(Icons.add),
+                onPressed: () {
+                  if(globalController.indexController.value == 0){
+                    adminController.getAdmin(true);
+                  }
+                  else
+                    Get.to(() => NewPlayerPage(-1), transition: Transition.zoom);
+                },
+                child: globalController.indexController.value == 0? Icon(Icons.sync_rounded) : Icon(Icons.add),
                 backgroundColor: colorPrimary,
               )
             )

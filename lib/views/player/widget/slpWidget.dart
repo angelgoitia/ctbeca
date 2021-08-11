@@ -121,7 +121,7 @@ class _SlpWidgetState extends State<SlpWidget> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       AutoSizeText(
-                        formatter.format((formatterBD.parse(playerController.player.value.listSlp![index].createdAt!))).toString(),
+                        formatter.format((formatterBD.parse(playerController.player.value.listSlp![index].date!))).toString(),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Colors.black87,

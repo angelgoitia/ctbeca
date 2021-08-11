@@ -197,7 +197,7 @@ class _AllSlpWidgetState extends State<AllSlpWidget> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       AutoSizeText(
-                        formatter.format((formatterBD.parse(adminController.players[globalController.indexSelect.toInt()].listSlp![index].createdAt!))).toString(),
+                        formatter.format((formatterBD.parse(adminController.players[globalController.indexSelect.toInt()].listSlp![index].date!))).toString(),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Colors.black87,

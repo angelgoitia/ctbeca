@@ -90,7 +90,7 @@ class FormController extends GetxController {
 
         if (jsonResponse['statusCode'] == 201) {
 
-          await adminController.getAdmin();
+          await adminController.getAdmin(false);
           Get.back();
           Get.back();
           globalController.showMessage("Ha sido Guardado correctamente!", true);

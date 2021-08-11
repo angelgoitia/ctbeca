@@ -89,6 +89,7 @@ class LoginController extends GetxController {
             adminController.admin.value = new Admin.fromJson(jsonResponse);
             adminController.players.value = (jsonResponse['players'] as List).map((val) => Player.fromJson(val)).toList();
             globalController.dbctbeca.createOrUpdateAdmin(adminController.admin.value);
+            globalController.dbctbeca.createOrUpdateListPlayer(adminController.players);
             Get.back();
             Get.off(() => AdminMainPage());
 

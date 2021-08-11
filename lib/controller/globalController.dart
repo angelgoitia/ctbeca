@@ -21,6 +21,12 @@ class GlobalController extends GetxController {
   AdminController adminController = Get.put(AdminController());
   PlayerController playerController = Get.put(PlayerController());
 
+  @override
+  void onInit(){
+    super.onInit();
+    indexController.value = 0;
+  }
+
   changeSelectIndex(int index)
   {
     indexSelect.value = index;
@@ -59,8 +65,8 @@ class GlobalController extends GetxController {
     try {
       result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        var route = prefs.getInt('type') == 0? "logout":"logoutPlayer";
-        print("entro: ${playerController.player.value.tokenFCM}");
+        var route = prefs.getInt('type') == 0? "logout" : "logoutPlayer";
+        print("entro: ${playerController.player.value.accessToken}");
         response = await http.post(
           Uri.parse(urlApi+route),
           headers:{
@@ -100,6 +106,7 @@ class GlobalController extends GetxController {
 
   removeVariable() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    dbctbeca.deleteAll();
     prefs.remove("access_token");
     prefs.remove("type");
     Get.off(() => LoginPage(), transition: Transition.zoom);

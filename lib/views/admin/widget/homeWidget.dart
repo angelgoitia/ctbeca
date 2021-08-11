@@ -17,13 +17,18 @@ class HomeWidget extends StatefulWidget {
 }
 
 class _HomeWidgetState extends State<HomeWidget> {
-
   DateTime now = new DateTime.now();
   final DateFormat formatter = DateFormat('yyyy-MM-dd');
   List<MaterialColor> listColor = [Colors.orange, Colors.blue, Colors.red];
   List<String> listDate = ["Hoy", "Ayer", "Ultimos 6 Dias"];
 
   AdminController adminController = Get.put(AdminController());
+
+  @override
+  void initState() {
+    super.initState();
+    adminController.getDataGraphic();
+  }
 
 
   _getSeriesData(data) {
@@ -58,52 +63,54 @@ class _HomeWidgetState extends State<HomeWidget> {
 
   showWidget(int index)
   {
-    return GFCard(
-      shape: RoundedRectangleBorder(
-        side: BorderSide(color: colorPrimary, width: 1),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      boxFit: BoxFit.cover,
-      titlePosition: GFPosition.start,
-      title: GFListTile(
-        avatar: GFAvatar(
-          size: 45,
-          backgroundColor: listColor[index],
-          shape: GFAvatarShape.standard,
-          child: GFAvatar(
-            backgroundImage: AssetImage("assets/icons/SLP.png"),
-            backgroundColor: Colors.transparent,
-            size: 30,
+    return Obx(
+      () => GFCard(
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: colorPrimary, width: 1),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        boxFit: BoxFit.cover,
+        titlePosition: GFPosition.start,
+        title: GFListTile(
+          avatar: GFAvatar(
+            size: 45,
+            backgroundColor: listColor[index],
+            shape: GFAvatarShape.standard,
+            child: GFAvatar(
+              backgroundImage: AssetImage("assets/icons/SLP.png"),
+              backgroundColor: Colors.transparent,
+              size: 30,
+            ),
+          ),
+          titleText: 'Total de SLP',
+          title: AutoSizeText(
+            'Total de SLP',
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.normal,
+              fontFamily: 'MontserratBold',
+            ),
+            maxFontSize: 14,
+            minFontSize: 14,
+          ),
+          subTitleText: "",
+          icon: AutoSizeText(
+            showTotal(index, adminController.players).toString(),style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.normal,
+              fontFamily: 'MontserratMedium',
+            ),
+            maxFontSize: 18,
+            minFontSize: 18,
           ),
         ),
-        titleText: 'Total de SLP',
-        title: AutoSizeText(
-          'Total de SLP',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.normal,
-            fontFamily: 'MontserratBold',
-          ),
-          maxFontSize: 14,
-          minFontSize: 14,
+        content: Row(
+          children: [
+            Icon(Icons.calendar_today),
+            SizedBox(width: 10,),
+            Text(listDate[index]),
+          ],
         ),
-        subTitleText: "",
-        icon: AutoSizeText(
-          showTotal(index, adminController.players).toString(),style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.normal,
-            fontFamily: 'MontserratMedium',
-          ),
-          maxFontSize: 18,
-          minFontSize: 18,
-        ),
-      ),
-      content: Row(
-        children: [
-          Icon(Icons.calendar_today),
-          SizedBox(width: 10,),
-          Text(listDate[index]),
-        ],
       ),
     );
   }
@@ -117,9 +124,7 @@ class _HomeWidgetState extends State<HomeWidget> {
     switch (index) {
       case 0:
         for (var player in players) {
-
           if(player.listSlp!.length >0) break;
-
           DateTime dateList = DateTime.parse(player.listSlp![player.listSlp!.length -1].date!);
           if(dateList.day == now.day && dateList.month == now.month && dateList.year == now.year){
             totalSLP += player.listSlp![player.listSlp!.length -1].daily!.toInt();

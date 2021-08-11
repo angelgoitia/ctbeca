@@ -134,6 +134,7 @@ class _FormWidgetState extends State<FormWidget> {
                             fontSize: 16.0
                           );
                         else{
+                          print("entro");
                           FocusScope.of(context).requestFocus(_phoneFocus);
                           formController.digitsPhone.value = newValue!;
                         }
@@ -184,7 +185,7 @@ class _FormWidgetState extends State<FormWidget> {
                         fontSize: 14,
                       ),
                       validator: (value) => value!.length == 7?  null : '',
-                      onSaved: (value) => formController.player.value.phone = "${formController.digitsPhone.value}-${value!.trim()}",
+                      onSaved: (value) => formController.player.value.phone = formController.digitsPhone.value.length == 0 ? "${adminController.players[index].phone!.substring(0,4)}-${value!.trim()}" : "${formController.digitsPhone.value}-${value!.trim()}",
                     )
                   ),
                 ],

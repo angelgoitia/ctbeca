@@ -1,4 +1,5 @@
 import 'package:ctbeca/controller/globalController.dart';
+import 'package:ctbeca/controller/playerController.dart';
 import 'package:ctbeca/env.dart';
 import 'package:ctbeca/views/player/widget/historyWidget.dart';
 import 'package:ctbeca/views/player/widget/playerWidget.dart';
@@ -21,11 +22,16 @@ class _PlayerMainPageState extends State<PlayerMainPage> with SingleTickerProvid
   TabController? tabController;
 
   GlobalController globalController = Get.put(GlobalController());
+  PlayerController playerController = Get.put(PlayerController());
   
   @override
   void initState() {
     super.initState();
     tabController = TabController(length: 4, vsync: this);
+
+    tabController!.addListener(() {
+      globalController.indexController.value = tabController!.index;
+    });
   }
 
   @override
@@ -89,6 +95,19 @@ class _PlayerMainPageState extends State<PlayerMainPage> with SingleTickerProvid
             ),
           ],
         ),
+        floatingActionButton: Obx(
+          () => Visibility(
+            visible: globalController.indexController.value <= 1? true : false,
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 80),
+              child: FloatingActionButton(
+                onPressed: () => playerController.getPlayer(true),
+                child: globalController.indexController.value == 0? Icon(Icons.sync_rounded) : Icon(Icons.add),
+                backgroundColor: colorPrimary,
+              )
+            )
+          ),
+        )
       ),
     );
   }

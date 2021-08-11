@@ -29,14 +29,14 @@ class MainController extends GetxController {
       adminController.admin.value = Admin(
         accessToken: prefs.getString('access_token'),
       );
-      adminController.getAdmin();
+      adminController.getAdmin(false);
 
     }else if(prefs.containsKey('access_token') && prefs.containsKey('type') && prefs.getInt('type') == 1 ){
 
       playerController.player.value = Player(
         accessToken: prefs.getString('access_token'),
       );
-      playerController.getPlayer();
+      playerController.getPlayer(false);
 
     }else{
 

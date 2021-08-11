@@ -26,9 +26,12 @@ class AdminController extends GetxController {
     return data.map((val) => Player.fromJson(val)).toList();
   }
 
-  getAdmin() async {
+  getAdmin(bool loading) async {
     GlobalController globalController = Get.put(GlobalController());
     var result, response, jsonResponse;
+
+    if(loading)
+      globalController.loading();
 
     try {
       result = await InternetAddress.lookup('google.com');
@@ -52,22 +55,35 @@ class AdminController extends GetxController {
           admin.value = new Admin.fromJson(jsonResponse['admin']);
           admin.value.accessToken = accessToken;
           players.value = (jsonResponse['players'] as List).map((val) => Player.fromJson(val)).toList();
+          globalController.dbctbeca.createOrUpdateAdmin(admin.value);
           globalController.dbctbeca.createOrUpdateListPlayer(players);
           await getDataGraphic();
           Get.off(() => AdminMainPage());
 
-        } else{
+        } else
           globalController.removeVariable();
-        }  
+
+        if(loading)
+          Get.back();
       }
     } on SocketException catch (_) {
-      admin.value = await globalController.dbctbeca.getAdmin();
-      players.value = await globalController.dbctbeca.getPlayers();
+
+      if(loading){
+        Get.back();
+        globalController.showMessage("Sin conexión a internet", false); 
+        await Future.delayed(Duration(seconds: 1));
+        Get.back();
+      }else{
+        admin.value = await globalController.dbctbeca.getAdmin();
+        players.value = await globalController.dbctbeca.getPlayers();
+        Get.off(() => AdminMainPage());
+      }
+      
     } 
   }
 
-  getDataGraphic(){
-
+  Future  getDataGraphic() async {
+    dataGraphic.value = <MyRow>[];
     for( var i = 6 ; i >= 1; i-- ) { 
       final dateLastSixDays = i == 1? DateTime.now() : DateTime.now().subtract(Duration(days:i-1));
       var statusForeach = false;

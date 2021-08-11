@@ -26,6 +26,12 @@ class _HomeWidgetState extends State<HomeWidget> {
 
   PlayerController playerController = Get.put(PlayerController());
 
+  @override
+  void initState() {
+    super.initState();
+    playerController.getDataGraphic();
+  }
+
   _getSeriesData() {
     List<charts.Series<MyRow, DateTime>> series = [
       charts.Series<MyRow, DateTime>(
