@@ -16,10 +16,13 @@ class AdminController extends GetxController {
   final players = <Player>[].obs;
   final dataGraphic = <MyRow>[].obs;
   final histories = <History>[].obs;
+  final statusPoints = false.obs;
+  final selectMyRow = MyRow().obs;
 
   @override
   void onReady() {
     super.onReady();
+    statusPoints.value = false;
   }
 
   List<Player> getListPlayers(data) {
@@ -101,11 +104,11 @@ class AdminController extends GetxController {
 
       if(statusForeach)
         dataGraphic.add(
-          MyRow(dateLastSixDays, totalSlp)
+          MyRow(timeStamp: dateLastSixDays, amount: totalSlp)
         );
       else
         dataGraphic.add(
-          MyRow(dateLastSixDays, 0)
+          MyRow(timeStamp: dateLastSixDays, amount: 0)
         );
     } 
     

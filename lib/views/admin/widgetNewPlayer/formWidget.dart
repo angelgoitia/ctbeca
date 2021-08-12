@@ -431,7 +431,9 @@ class _FormWidgetState extends State<FormWidget> {
                             imageUrl: "http://"+url+"/storage/${adminController.players[index].urlCodeQr}",
                             placeholder: (context, url) => CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(colorPrimary)),
                             errorWidget: (context, url, error) => Icon(Icons.error),
-                            fit: BoxFit.fill,              
+                            fit: BoxFit.fill,          
+                            width: size.width / 2,
+                            height: size.width / 2,    
                           )
                         : ClipRRect(
                           child: Image.file(

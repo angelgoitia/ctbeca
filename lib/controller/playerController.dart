@@ -15,6 +15,8 @@ class PlayerController extends GetxController {
   final player = Player().obs;
   final dataGraphic = <MyRow>[].obs;
   final histories = <History>[].obs;
+  final statusPoints = false.obs;
+  final selectMyRow = MyRow().obs;
   
   getPlayer(bool loading) async {
     GlobalController globalController = Get.put(GlobalController());
@@ -79,14 +81,14 @@ class PlayerController extends GetxController {
         if(dateList.day == dateLastSixDays.day && dateList.month == dateLastSixDays.month && dateList.year == dateLastSixDays.year){
           statusForeach = true;
           dataGraphic.add(
-            MyRow(dateLastSixDays, item.daily!)
+            MyRow(timeStamp: dateLastSixDays, amount: item.daily!)
           );
         }
       }
 
       if(!statusForeach)
         dataGraphic.add(
-          MyRow(dateLastSixDays, 0)
+          MyRow(timeStamp: dateLastSixDays, amount: 0)
         );
 
     } 

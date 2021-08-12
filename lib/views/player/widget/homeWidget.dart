@@ -37,7 +37,7 @@ class _HomeWidgetState extends State<HomeWidget> {
       charts.Series<MyRow, DateTime>(
         id: 'Amount',
         data: playerController.dataGraphic,
-        domainFn: (MyRow row, _) => row.timeStamp,
+        domainFn: (MyRow row, _) => row.timeStamp!,
         measureFn: (MyRow row, _) => row.amount,
         colorFn: (MyRow row, _) => charts.MaterialPalette.green.shadeDefault,
         fillColorFn: (MyRow row, _) => charts.MaterialPalette.blue.shadeDefault,
@@ -178,8 +178,70 @@ class _HomeWidgetState extends State<HomeWidget> {
                   day: new charts.TimeFormatterSpec(
                     format: 'dd/MM/yy', transitionFormat: 'dd/MM/yy', 
                   )
+                ),
+              ),
+              defaultRenderer: new charts.LineRendererConfig(includePoints: true),
+              selectionModels: [
+                new charts.SelectionModelConfig(
+                  type: charts.SelectionModelType.info,
+                  updatedListener: _onSelectionChanged,
                 )
-              )
+              ],
+            ),
+          ),
+          SizedBox(height: 15,),
+          Obx(
+            () => Visibility(
+              visible: playerController.statusPoints.value,
+              child: AutoSizeText.rich(
+                TextSpan(
+                  text: 'Fecha: ',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    fontFamily: 'MontserratBold',
+                  ),
+                  children: <TextSpan>[
+                    TextSpan(
+                      text: playerController.selectMyRow.value.timeStamp == null? '' : formatter.format(playerController.selectMyRow.value.timeStamp!),
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.normal,
+                        fontFamily: 'MontserratMedium',
+                      ),
+                    ),
+                  ],
+                ),
+                maxFontSize: 14,
+                minFontSize: 14,
+              ),
+            ),
+          ),
+          Obx(
+            () => Visibility(
+              visible: playerController.statusPoints.value,
+              child: AutoSizeText.rich(
+                TextSpan(
+                  text: 'Total: ',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    fontFamily: 'MontserratBold',
+                  ),
+                  children: <TextSpan>[
+                    TextSpan(
+                      text: playerController.selectMyRow.value.timeStamp == null? '' : playerController.selectMyRow.value.amount.toString(),
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.normal,
+                        fontFamily: 'MontserratMedium',
+                      ),
+                    ),
+                  ],
+                ),
+                maxFontSize: 14,
+                minFontSize: 14,
+              ),
             ),
           ),
           SizedBox(height: 15,),
@@ -195,4 +257,16 @@ class _HomeWidgetState extends State<HomeWidget> {
     );
   }
 
+  _onSelectionChanged(charts.SelectionModel model) {
+    final selectedDatum = model.selectedDatum;
+
+    if (selectedDatum.isNotEmpty) {
+      playerController.statusPoints.value = true;
+      playerController.selectMyRow.value = MyRow(
+        timeStamp: selectedDatum.first.datum.timeStamp,
+        amount: selectedDatum.first.datum.amount,
+      );
+    }else
+      playerController.statusPoints.value = false;
+  }
 }

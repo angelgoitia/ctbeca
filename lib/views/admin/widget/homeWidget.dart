@@ -36,7 +36,7 @@ class _HomeWidgetState extends State<HomeWidget> {
       charts.Series<MyRow, DateTime>(
         id: 'Amount',
         data: data.value,
-        domainFn: (MyRow row, _) => row.timeStamp,
+        domainFn: (MyRow row, _) => row.timeStamp!,
         measureFn: (MyRow row, _) => row.amount,
         colorFn: (MyRow row, _) => charts.MaterialPalette.green.shadeDefault,
         fillColorFn: (MyRow row, _) => charts.MaterialPalette.blue.shadeDefault,
@@ -182,9 +182,70 @@ class _HomeWidgetState extends State<HomeWidget> {
                     )
                   ),
                 ),
-                defaultRenderer: new charts.LineRendererConfig(includePoints: true)
+                defaultRenderer: new charts.LineRendererConfig(includePoints: true),
+                selectionModels: [
+                  new charts.SelectionModelConfig(
+                    type: charts.SelectionModelType.info,
+                    updatedListener: _onSelectionChanged,
+                  )
+                ],
               ),
             )
+          ),
+          SizedBox(height: 15,),
+          Obx(
+            () => Visibility(
+              visible: adminController.statusPoints.value,
+              child: AutoSizeText.rich(
+                TextSpan(
+                  text: 'Fecha: ',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    fontFamily: 'MontserratBold',
+                  ),
+                  children: <TextSpan>[
+                    TextSpan(
+                      text: adminController.selectMyRow.value.timeStamp == null? '' : formatter.format(adminController.selectMyRow.value.timeStamp!),
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.normal,
+                        fontFamily: 'MontserratMedium',
+                      ),
+                    ),
+                  ],
+                ),
+                maxFontSize: 14,
+                minFontSize: 14,
+              ),
+            ),
+          ),
+          Obx(
+            () => Visibility(
+              visible: adminController.statusPoints.value,
+              child: AutoSizeText.rich(
+                TextSpan(
+                  text: 'Total: ',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    fontFamily: 'MontserratBold',
+                  ),
+                  children: <TextSpan>[
+                    TextSpan(
+                      text: adminController.selectMyRow.value.amount == null? '' : adminController.selectMyRow.value.amount.toString(),
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.normal,
+                        fontFamily: 'MontserratMedium',
+                      ),
+                    ),
+                  ],
+                ),
+                maxFontSize: 14,
+                minFontSize: 14,
+              ),
+            ),
           ),
           SizedBox(height: 15,),
           Row(
@@ -197,6 +258,21 @@ class _HomeWidgetState extends State<HomeWidget> {
         ],
       )
     );
+  }
+
+
+  _onSelectionChanged(charts.SelectionModel model) {
+    print("entro");
+    final selectedDatum = model.selectedDatum;
+
+    if (selectedDatum.isNotEmpty) {
+      adminController.statusPoints.value = true;
+      adminController.selectMyRow.value = MyRow(
+        timeStamp: selectedDatum.first.datum.timeStamp,
+        amount: selectedDatum.first.datum.amount,
+      );
+    }else
+      adminController.statusPoints.value = false;
   }
 
 }
