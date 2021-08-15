@@ -134,7 +134,6 @@ class _FormWidgetState extends State<FormWidget> {
                             fontSize: 16.0
                           );
                         else{
-                          print("entro");
                           FocusScope.of(context).requestFocus(_phoneFocus);
                           formController.digitsPhone.value = newValue!;
                         }

@@ -2,7 +2,7 @@
     package="com.example.ctbeca">
   <uses-permission android:name="android.permission.INTERNET"/>
   <application
-        android:label="ctbeca"
+        android:label="CTBeca"
         android:icon="@mipmap/launcher_icon">
 
         <activity

@@ -144,7 +144,7 @@ class _HomeWidgetState extends State<HomeWidget> {
         break;
       case 2:
         final _lastDay = DateTime.now().add(Duration(days:1));
-        final dateLastSixDays = DateTime.now().subtract(Duration(days:6));
+        final dateLastSixDays = DateTime.now().subtract(Duration(days:7));
         
         for (var item in listSlp) {
           DateTime dateList = DateTime.parse(item.date!);

@@ -145,7 +145,7 @@ class _HomeWidgetState extends State<HomeWidget> {
         break;
       case 2:
         final _lastDay = DateTime.now().add(Duration(days:1));
-        final dateLastSixDays = DateTime.now().subtract(Duration(days:6));
+        final dateLastSixDays = DateTime.now().subtract(Duration(days:7));
         for (var player in players) {
           for (var item in player.listSlp!) {
             DateTime dateList = DateTime.parse(item.date!);
@@ -262,7 +262,6 @@ class _HomeWidgetState extends State<HomeWidget> {
 
 
   _onSelectionChanged(charts.SelectionModel model) {
-    print("entro");
     final selectedDatum = model.selectedDatum;
 
     if (selectedDatum.isNotEmpty) {
