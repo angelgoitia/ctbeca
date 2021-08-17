@@ -38,7 +38,6 @@ class _FormWidgetState extends State<FormWidget> {
   final FocusNode _passwordGameFocus = FocusNode();  
   TextEditingController _phoneController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
-  bool statusPlayer = false;
 
   FormController formController = Get.put(FormController());
   AdminController adminController = Get.put(AdminController());
@@ -48,6 +47,7 @@ class _FormWidgetState extends State<FormWidget> {
     super.initState();
     _phoneController.text = index >= 0? adminController.players[index].phone!.substring(5) : '';
     formController.player.value.wallet  = index >= 0? adminController.players[index].wallet! : '';
+    formController.selectDropdowReference.value = index >=0? adminController.players[index].name! : "Seleccionar";
   }
 
   @override
@@ -98,7 +98,8 @@ class _FormWidgetState extends State<FormWidget> {
                 ),
               ),
             ),
-              Padding(
+
+            Padding(
               padding: EdgeInsets.fromLTRB(30.0, 20.0, 30.0, 0.0),
               child: Row(
                 children: [
@@ -156,11 +157,25 @@ class _FormWidgetState extends State<FormWidget> {
                     ),
                   ),
 
-                  SizedBox(width: 15,),
+                  SizedBox(width: 10,),
+                  AutoSizeText(
+                    '-',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: 'MontserratSemiBold',
+                    ),
+                    maxFontSize: 14,
+                    minFontSize: 14,
+                  ),
+                  SizedBox(width: 10,),
 
                   Expanded(
                     child: new TextFormField(
                       controller: _phoneController,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp("[0-9]")),
+                        new LengthLimitingTextInputFormatter(7),
+                      ], 
                       maxLines: 1,
                       keyboardType: TextInputType.phone,
                       autofocus: false,
@@ -285,38 +300,134 @@ class _FormWidgetState extends State<FormWidget> {
               ),
             ),
 
+
             Padding(
-              padding: const EdgeInsets.fromLTRB(30.0, 20.0, 30.0, 0.0),
-              child: new TextFormField(
-                maxLines: 1,
-                initialValue: index >= 0? adminController.players[index].reference : '',
-                keyboardType: TextInputType.text,
-                textCapitalization: TextCapitalization.words,
-                autofocus: false,
-                focusNode: _referenceFocus,
-                onEditingComplete: () => FocusScope.of(context).requestFocus(_walletFocus),
-                decoration: new InputDecoration(
-                  labelText: "Referencia",
-                  labelStyle: TextStyle(
-                    color: colorPrimary,
-                    fontFamily: 'MontserratSemiBold',
-                    fontSize: 14,
-                  ),
-                  icon: Icon(
+              padding: EdgeInsets.fromLTRB(30.0, 20.0, 30.0, 0.0),
+              child: Row(
+                children: [
+                  Icon(
                     Icons.supervisor_account,
                     color: colorPrimary,
                   ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: colorPrimary),
+
+                  SizedBox(width: 15,),
+
+                  Obx(
+                    () => DropdownButton<String>(
+                      value: formController.selectDropdowReference.value,
+                      icon: Icon(Icons.arrow_drop_down, color: colorPrimary),
+                      elevation: 16,
+                      underline: Container(
+                        height: 2,
+                        color: formController.statusErrorReference.value? Colors.red : colorPrimary,
+                      ),
+                      style: TextStyle(
+                        fontFamily: 'MontserratSemiBold',
+                        fontSize:14
+                      ),
+                      onChanged: (String? newValue) {
+                        if(newValue == "Seleccionar"){
+                          formController.statusOtherReference.value = false;
+                          Fluttertoast.showToast(
+                            msg: "Debe seleccionar una referencia!",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.CENTER,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: colorPrimary,
+                            textColor: Colors.white,
+                            fontSize: 16.0
+                          );
+                        }
+                        else if(newValue == "Otro"){
+                          formController.statusOtherReference.value = true;
+                          FocusScope.of(context).requestFocus(_referenceFocus);
+                        }
+                        else{
+                          formController.statusOtherReference.value = false;
+                          FocusScope.of(context).requestFocus(_walletFocus);
+                        }
+                        
+                        formController.statusErrorReference.value = false;
+                        formController.selectDropdowReference.value = newValue!;
+                        formController.player.value.reference = newValue;
+                      },
+                      items: formController.listReferences.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: AutoSizeText(
+                              value,
+                              style: TextStyle(
+                                color: colorText,
+                                fontFamily: 'MontserratSemiBold',
+                                fontSize:14
+                              ),
+                              maxFontSize: 18,
+                              minFontSize: 18,
+                            ),
+                          );
+                      }).toList(),
+                    ),
                   ),
-                ),
-                textInputAction: TextInputAction.next ,
-                cursorColor: colorPrimary,
-                style: TextStyle(
-                  fontFamily: 'MontserratSemiBold',
-                  fontSize: 14,
-                ),
-                onSaved: (value) => formController.player.value.reference = value!.trim(),
+                ],
+              )
+            ),
+
+            Obx(
+              () => Visibility(
+                visible: formController.statusErrorReference.value,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(30.0, 5.0, 30.0, 0.0),
+                  child: Center(
+                    child: AutoSizeText(
+                      'Selecionar una referencia',
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontFamily: 'MontserratSemiBold',
+                      ),
+                      maxFontSize: 14,
+                      minFontSize: 14,
+                    )
+                  ),
+                )
+              )
+            ),
+
+            Obx(
+              () => Visibility(
+                visible: formController.statusOtherReference.value,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(30.0, 20.0, 30.0, 0.0),
+                  child: new TextFormField(
+                    maxLines: 1,
+                    keyboardType: TextInputType.text,
+                    textCapitalization: TextCapitalization.words,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp("[a-zA-Z\ áéíóúÁÉÍÓÚñÑ\s]")),
+                    ], 
+                    autofocus: false,
+                    focusNode: _referenceFocus,
+                    onEditingComplete: () => FocusScope.of(context).requestFocus(_walletFocus),
+                    decoration: new InputDecoration(
+                      labelText: "Referencia",
+                      labelStyle: TextStyle(
+                        color: colorPrimary,
+                        fontFamily: 'MontserratSemiBold',
+                        fontSize: 14,
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: colorPrimary),
+                      ),
+                    ),
+                    textInputAction: TextInputAction.next ,
+                    cursorColor: colorPrimary,
+                    style: TextStyle(
+                      fontFamily: 'MontserratSemiBold',
+                      fontSize: 14,
+                    ),
+                    validator: (value) => formController.statusOtherReference.value? value!.trim().length >5? null : 'Ingrese un nombre válido' : null,
+                    onSaved: (value) => formController.statusOtherReference.value? formController.player.value.reference = value!.trim() : formController.player.value.reference = formController.selectDropdowReference.value,
+                  ),
+                )
               ),
             ),
 
@@ -485,12 +596,12 @@ class _FormWidgetState extends State<FormWidget> {
 
             Obx(
               () => Visibility(
-                visible: formController.statusSubmit.value,
+                visible: formController.statusErrorQr.value,
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(30.0, 5.0, 30.0, 0.0),
                   child: Center(
                     child: AutoSizeText(
-                      'Ingrese un selecionar un Código QR',
+                      'Selecionar un Código QR',
                       style: TextStyle(
                         color: Colors.red,
                         fontFamily: 'MontserratSemiBold',
@@ -501,44 +612,6 @@ class _FormWidgetState extends State<FormWidget> {
                   ),
                 )
               )
-            ),
-
-            Padding(
-              padding: const EdgeInsets.fromLTRB(30.0, 20.0, 30.0, 0.0),
-              child: new TextFormField(
-                maxLines: 1,
-                initialValue: index >= 0? adminController.players[index].user : '',
-                keyboardType: TextInputType.emailAddress,
-                autofocus: false,
-                inputFormatters: [
-                  FilteringTextInputFormatter.deny(new RegExp(r"\s\b|\b\s"))
-                ],
-                focusNode: _userFocus,
-                onEditingComplete: () => FocusScope.of(context).requestFocus(_emailGameFocus),
-                decoration: new InputDecoration(
-                  labelText: "Usuario",
-                  labelStyle: TextStyle(
-                    color: colorPrimary,
-                    fontFamily: 'MontserratSemiBold',
-                    fontSize: 14,
-                  ),
-                  icon: Icon(
-                    Icons.person,
-                    color: colorPrimary,
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: colorPrimary),
-                  ),
-                ),
-                validator: (value) => value!.trim().length >= 5? null : 'Ingrese un Usuario válido',
-                onSaved: (value) => formController.player.value.user = value!.trim(),
-                textInputAction: TextInputAction.next ,
-                cursorColor: colorPrimary,
-                style: TextStyle(
-                  fontFamily: 'MontserratSemiBold',
-                  fontSize: 14,
-                ),
-              ),
             ),
 
             Padding(
@@ -750,8 +823,8 @@ class _FormWidgetState extends State<FormWidget> {
         compressFormat: ImageCompressFormat.jpg,
         androidUiSettings: AndroidUiSettings(
           toolbarTitle: "Editar Foto",
-          backgroundColor: Colors.black,
-          toolbarWidgetColor: Colors.black,
+          backgroundColor: Colors.white,
+          toolbarWidgetColor: Colors.white,
           toolbarColor: Colors.white,
         ),
         iosUiSettings: IOSUiSettings(
@@ -764,7 +837,7 @@ class _FormWidgetState extends State<FormWidget> {
         Navigator.of(context).pop();
         formController.fileSelect = cropped;
         formController.imageSelect.value = true;
-
+        formController.statusErrorQr.value = false;
         formController.player.value.urlCodeQr = base64Encode(cropped.readAsBytesSync());
 
       }
@@ -774,18 +847,24 @@ class _FormWidgetState extends State<FormWidget> {
   void tapSubmit(index){
 
     if(index < 0 && !formController.imageSelect.value)
-      formController.statusSubmit.value = true;
+      formController.statusErrorQr.value = true;
     else 
-      formController.statusSubmit.value = false;
+      formController.statusErrorQr.value = false;
 
     if("${formController.digitsPhone.value}-${_phoneController.text.trim()}".length != 12)
       formController.statusErrorPhone.value = true;
     else
       formController.statusErrorPhone.value = false;
-    
-    if(_formKeyNewPlayer.currentState!.validate()){
+
+    if(formController.selectDropdowReference.value == 'Seleccionar')
+      formController.statusErrorReference.value = true;
+    else 
+      formController.statusErrorReference.value = false;
+
+    print("referencia1: ${formController.player.value.reference}");
+
+    if(_formKeyNewPlayer.currentState!.validate() && !formController.statusErrorPhone.value && !formController.statusErrorQr.value && formController.selectDropdowReference.value != 'Seleccionar'){
       _formKeyNewPlayer.currentState!.save();
-      formController.statusErrorPhone.value = false;
       _passwordController.clear();
       formController.submitForm(index);
     } 

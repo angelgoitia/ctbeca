@@ -16,7 +16,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginController extends GetxController {  
   final messageError = ''.obs;
-  final passwordVisible = true.obs, statusError = false.obs, statusPassword = false.obs;
+  final passwordVisible = true.obs, statusError = false.obs;
 
   @override
   void onInit() {
@@ -30,7 +30,7 @@ class LoginController extends GetxController {
     super.onReady();
   }
 
-  validarEmailWallet(String value){
+  validarEmail(String value){
     value = value.trim().toLowerCase();
     // This is just a regular expression for email addresses
     String p = "[a-zA-Z0-9\+\.\_\%\-\+]{1,256}" +
@@ -43,14 +43,14 @@ class LoginController extends GetxController {
     RegExp regExp = new RegExp(p);
 
     if (value.isNotEmpty && regExp.hasMatch(value)) {
-      return statusPassword.value = true;    
+      return null;    
     }
 
-    statusPassword.value = false; 
+    return "Ingrese un correo electrónico válido"; 
 
   }
 
-  formSubmit(emailWallet, password)async{
+  formSubmit(email, password)async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     GlobalController globalController = Get.put(GlobalController());
     AdminController adminController = Get.put(AdminController());
@@ -59,112 +59,69 @@ class LoginController extends GetxController {
 
     globalController.loading();
 
-    if(this.statusPassword.value){
+    try {
+      result = await InternetAddress.lookup('google.com'); //verify network
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
 
-      try {
-        result = await InternetAddress.lookup('google.com'); //verify network
-        if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        var parameters = jsonToUrl(jsonEncode({
+          'email': email,
+          'password': password,
+        }));
 
-          var parameters = jsonToUrl(jsonEncode({
-            'email': emailWallet,
-            'password': password,
-          }));
+        response = await http.get(
+          Uri.parse(urlApi+"login/$parameters"),
+          headers:{
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+          },
+        ); // petición api
+        print(response.body);
+        jsonResponse = jsonDecode(response.body);
 
-          response = await http.get(
-            Uri.parse(urlApi+"loginAdmin/$parameters"),
-            headers:{
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-              'X-Requested-With': 'XMLHttpRequest',
-            },
-          ); // petición api
-          print(response.body);
-          jsonResponse = jsonDecode(response.body);
+        if (jsonResponse['statusCode'] == 201 && jsonResponse['type'] == 0) {
 
-          if (jsonResponse['statusCode'] == 201) {
+          statusError.value = false;
+          prefs.setString('access_token', jsonResponse['access_token']);
+          prefs.setInt('type',0);
+          adminController.admin.value = new Admin.fromJson(jsonResponse);
+          adminController.players.value = (jsonResponse['players'] as List).map((val) => Player.fromJson(val)).toList();
+          globalController.dbctbeca.createOrUpdateAdmin(adminController.admin.value);
+          globalController.dbctbeca.createOrUpdateListPlayer(adminController.players);
+          globalController.getPriceSLP();
+          Get.back();
+          Get.off(() => AdminMainPage());
 
-            statusError.value = false;
-            prefs.setString('access_token', jsonResponse['access_token']);
-            prefs.setInt('type',0);
-            adminController.admin.value = new Admin.fromJson(jsonResponse);
-            adminController.players.value = (jsonResponse['players'] as List).map((val) => Player.fromJson(val)).toList();
-            globalController.dbctbeca.createOrUpdateAdmin(adminController.admin.value);
-            globalController.dbctbeca.createOrUpdateListPlayer(adminController.players);
-            Get.back();
-            Get.off(() => AdminMainPage());
+        } else if(jsonResponse['statusCode'] == 201 && jsonResponse['type'] == 1) {
 
-          } else if(jsonResponse['statusCode'] == 400){
+          statusError.value = false;
+          prefs.setString('access_token', jsonResponse['access_token']);
+          prefs.setInt('type',1);
+          playerController.player.value = new Player.fromJson(jsonResponse['player']);
+          playerController.player.value.accessToken = jsonResponse['access_token'];
+          globalController.dbctbeca.createOrUpdatePlayer(playerController.player.value);
+          globalController.getPriceSLP();
+          Get.back();
+          Get.off(() => PlayerMainPage());
 
-            statusError.value = true;
-            messageError.value = jsonResponse['message'];
+        } else if(jsonResponse['statusCode'] == 400){
 
-          } else if(jsonResponse['message'] == 'Unauthorized'){
+          statusError.value = true;
+          messageError.value = jsonResponse['message'];
 
-            statusError.value = true;
-            messageError.value = "Email o contraseña incorrectos";
+        } else if(jsonResponse['message'] == 'Unauthorized'){
 
-          }  
-        }
-      } on SocketException catch (_) {
-        
-        statusError.value = true;
-        messageError.value = "Sin conexión, inténtalo de nuevo mas tarde";
-        
-      } 
-  
-    }else{
+          statusError.value = true;
+          messageError.value = "Email o contraseña incorrectos";
+
+        }  
+      }
+    } on SocketException catch (_) {
       
-      try {
-        result = await InternetAddress.lookup('google.com'); //verify network
-        if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-          var wallet = emailWallet.replaceAll("ronin:","");
-          var parameters = jsonToUrl(jsonEncode({
-            'wallet': wallet,
-          }));
-
-          response = await http.get(
-            Uri.parse(urlApi+"loginPlayer/$parameters"),
-            headers:{
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-              'X-Requested-With': 'XMLHttpRequest',
-            },
-          ); // petición api
-          print(response.body);
-          jsonResponse = jsonDecode(response.body);
-
-          if (jsonResponse['statusCode'] == 201) {
-
-            statusError.value = false;
-            prefs.setString('access_token', jsonResponse['access_token']);
-            prefs.setInt('type',1);
-            playerController.player.value = new Player.fromJson(jsonResponse['player']);
-            playerController.player.value.accessToken = jsonResponse['access_token'];
-            globalController.dbctbeca.createOrUpdatePlayer(playerController.player.value);
-
-            Get.back();
-            Get.off(() => PlayerMainPage());
-            
-          } else if(jsonResponse['statusCode'] == 400){
-
-            statusError.value = true;
-            messageError.value = jsonResponse['message'];
-
-          } else if(jsonResponse['message'] == 'Unauthorized'){
-
-            statusError.value = true;
-            messageError.value = "Billetera incorrectos";
-
-          }  
-        }
-      } on SocketException catch (_) {
-
-        statusError.value = true;
-        messageError.value = "Sin conexión, inténtalo de nuevo mas tarde";
-
-      } 
-  
-    } 
+      statusError.value = true;
+      messageError.value = "Sin conexión, inténtalo de nuevo mas tarde";
+      
+    }  
 
     if (statusError.value)
       Get.back(result: true);

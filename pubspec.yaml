@@ -20,6 +20,7 @@ dependencies:
   dropdown_search: ^0.6.3
   flutter_localizations:
     sdk: flutter
+  flutter_masked_text2: ^0.9.1
   fluttertoast: ^8.0.8
   get: ^4.3.0
   getwidget: ^2.0.3

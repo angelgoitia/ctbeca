@@ -84,8 +84,8 @@ class _PlayerMainPageState extends State<PlayerMainPage> with SingleTickerProvid
                   text: "Perfil",
                 ),
                 Tab(
-                  icon: Icon(Icons.videogame_asset),
-                  text: "LSP"
+                  icon: Icon(Icons.sports_esports),
+                  text: "SLP"
                 ),
                 Tab(
                   icon: Icon(Icons.request_quote_rounded),

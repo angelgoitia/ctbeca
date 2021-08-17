@@ -38,7 +38,7 @@ class _NewPlayerPageState extends State<NewPlayerPage> {
           ),
           centerTitle: true,
           title: Text(
-            "Nuevo Becado",
+            index >= 0 ? "Modificar Becado" : "Nuevo Becado",
             style: TextStyle(
               color: colorPrimary,
               fontFamily: 'MontserratSemiBold',

@@ -13,8 +13,8 @@ import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GlobalController extends GetxController { 
-  final indexSelect = 0.obs;
-  final indexController = 0.obs; 
+  final indexSelect = 0.obs, indexController = 0.obs, priceSLP=0.00.obs, todayPriceSLP=''.obs; 
+
   DateTime? currentBackPressTime; 
   DBctbeca dbctbeca = DBctbeca();
 
@@ -54,6 +54,50 @@ class GlobalController extends GetxController {
       return Future.value(false);
     }
     return exit(0);
+  }
+
+  getPriceSLP() async {
+    var result, response, jsonResponse;
+    List<String> listUrl = ['https://api.binance.com', 'https://api1.binance.com', 'https://api2.binance.com', 'https://api3.binance.com'];
+    try {
+      for (var item in listUrl) {
+        result = await InternetAddress.lookup('google.com');
+        if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+
+          var parameters = jsonToUrl(jsonEncode({
+            'symbol': 'SLPUSDT',
+          }));
+
+          response = await http.get(
+            Uri.parse(item+"/api/v3/ticker/price$parameters"),
+            headers:{
+              'Content-Type': 'application/json',
+              'X-Requested-With': 'XMLHttpRequest',
+            },
+          ); 
+
+          jsonResponse = jsonDecode(response.body);
+
+          if (jsonResponse['symbol'] == 'SLPUSDT') {
+            priceSLP.value = double.parse(jsonResponse['price']);
+            break;
+          }  
+        }
+      }
+    } on SocketException catch (_) {
+      priceSLP.value = 0;
+    } 
+  }
+
+  String jsonToUrl(value){
+    String parametersUrl="?";
+    final json = jsonDecode(value) as Map;
+    for (final name in json.keys) {
+      final value = json[name];
+      parametersUrl = parametersUrl + "$name=$value&";
+    }
+    
+    return parametersUrl.substring(0, parametersUrl.length-1);
   }
 
   removeSession() async {

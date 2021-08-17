@@ -62,42 +62,86 @@ class _LoginPageState extends State<LoginPage> {
       child: new ListView(
         shrinkWrap: true,
         children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.fromLTRB(30.0, 20.0, 30.0, 0.0),
+            child: new TextFormField(
+              controller: _emailwalletController,
+              maxLines: 1,
+              keyboardType: TextInputType.text,
+              autofocus: false,
+              focusNode: _emailFocus,
+              onEditingComplete: () => FocusScope.of(context).requestFocus(_passwordFocus),
+              inputFormatters: [
+                FilteringTextInputFormatter.deny(new RegExp(r"\s\b|\b\s"))
+              ],
+              decoration: new InputDecoration(
+                labelText: "Correo Electrónico",
+                labelStyle: TextStyle(
+                  color: colorPrimary,
+                  fontFamily: 'MontserratSemiBold',
+                  fontSize: 14,
+                ),
+                icon: new Icon(
+                  Icons.mail,
+                  color: colorPrimary,
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: colorPrimary),
+                ),
+              ),
+              validator: (value) => controllerLogin.validarEmail(value!),
+              textInputAction: TextInputAction.next ,
+              cursorColor: colorPrimary,
+              style: TextStyle(
+                fontFamily: 'MontserratSemiBold',
+                fontSize: 14,
+              ),
+            ),
+          ),
+
           Obx(
             () => Padding(
               padding: const EdgeInsets.fromLTRB(30.0, 20.0, 30.0, 0.0),
               child: new TextFormField(
-                controller: _emailwalletController,
+                controller: _passwordController,
                 maxLines: 1,
-                keyboardType: TextInputType.text,
                 autofocus: false,
-                focusNode: _emailFocus,
-                onEditingComplete: () {
-                  if(controllerLogin.statusPassword.value)
-                    FocusScope.of(context).requestFocus(_passwordFocus);
-                  else 
-                    tapSubmit();
-                } ,
-                inputFormatters: [
-                  FilteringTextInputFormatter.deny(new RegExp(r"\s\b|\b\s"))
-                ],
+                keyboardType: TextInputType.text,
+                obscureText: controllerLogin.passwordVisible.value,
+                focusNode: _passwordFocus,
                 decoration: new InputDecoration(
-                  labelText: !controllerLogin.statusPassword.value? "Billetera" : "Correo Electrónico",
+                  labelText: "Contraseña",
                   labelStyle: TextStyle(
                     color: colorPrimary,
                     fontFamily: 'MontserratSemiBold',
                     fontSize: 14,
                   ),
                   icon: new Icon(
-                    controllerLogin.statusPassword.value? Icons.mail : Icons.account_balance_wallet ,
-                    color: colorPrimary,
+                    Icons.lock,
+                    color: colorPrimary
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      controllerLogin.passwordVisible.value
+                      ? Icons.visibility_off
+                      : Icons.visibility,
+                      color: colorPrimary,
+                      ),
+                    onPressed: () =>controllerLogin.passwordVisible.value = !controllerLogin.passwordVisible.value,
                   ),
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: colorPrimary),
                   ),
                 ),
-                validator: (value) => value!.trim().length >5? null : controllerLogin.statusPassword.value? 'Ingrese un correo electrónico válido' : 'Ingrese una billetera válido',
-                onChanged: controllerLogin.validarEmailWallet,
-                textInputAction: !controllerLogin.statusPassword.value? TextInputAction.done : TextInputAction.next ,
+                inputFormatters: [
+                  FilteringTextInputFormatter.deny(new RegExp(r"\s\b|\b\s"))
+                ],
+                validator: (value) => value!.isEmpty || value.trim().length < 5? 'Ingrese una contraseña válida': null,
+                textInputAction: TextInputAction.done,
+                onFieldSubmitted: (term){
+                  FocusScope.of(context).requestFocus(new FocusNode());
+                  tapSubmit();
+                },
                 cursorColor: colorPrimary,
                 style: TextStyle(
                   fontFamily: 'MontserratSemiBold',
@@ -106,60 +150,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
           ),
-          Obx(
-            () => Visibility(
-              visible: controllerLogin.statusPassword.value,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(30.0, 20.0, 30.0, 0.0),
-                child: new TextFormField(
-                  controller: _passwordController,
-                  maxLines: 1,
-                  autofocus: false,
-                  keyboardType: TextInputType.text,
-                  obscureText: controllerLogin.passwordVisible.value,
-                  focusNode: _passwordFocus,
-                  decoration: new InputDecoration(
-                    labelText: "Contraseña",
-                    labelStyle: TextStyle(
-                      color: colorPrimary,
-                      fontFamily: 'MontserratSemiBold',
-                      fontSize: 14,
-                    ),
-                    icon: new Icon(
-                      Icons.lock,
-                      color: colorPrimary
-                    ),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        controllerLogin.passwordVisible.value
-                        ? Icons.visibility_off
-                        : Icons.visibility,
-                        color: colorPrimary,
-                        ),
-                      onPressed: () =>controllerLogin.passwordVisible.value = !controllerLogin.passwordVisible.value,
-                    ),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: colorPrimary),
-                    ),
-                  ),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.deny(new RegExp(r"\s\b|\b\s"))
-                  ],
-                  validator: (value) => value!.isEmpty || value.trim().length < 5? 'Ingrese una contraseña válida': null,
-                  textInputAction: TextInputAction.done,
-                  onFieldSubmitted: (term){
-                    FocusScope.of(context).requestFocus(new FocusNode()); //save the keyboard
-                    tapSubmit();
-                  },
-                  cursorColor: colorPrimary,
-                  style: TextStyle(
-                    fontFamily: 'MontserratSemiBold',
-                    fontSize: 14,
-                  ),
-                ),
-              )
-            ),
-          ),
+
           Obx(
             () => Visibility(
               visible: controllerLogin.statusError.value,

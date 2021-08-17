@@ -349,57 +349,6 @@ class _DetailsPLayerPageState extends State<DetailsPLayerPage> {
                         Expanded(
                           child: AutoSizeText.rich(
                             TextSpan(
-                              text: 'Usuario: ',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                                fontFamily: 'MontserratBold',
-                              ),
-                              children: <TextSpan>[
-                                TextSpan(
-                                  text: adminController.players[index].user,
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.normal,
-                                    fontFamily: 'MontserratMedium',
-                                  ),
-                                ),
-                              ],
-                            ),
-                            maxFontSize: 14,
-                            minFontSize: 14,
-                          )
-                        ),
-                        IconButton(
-                          icon: Icon(
-                            Icons.copy,
-                            color: colorPrimary,
-                          ), 
-                          tooltip: "Copiar Usuario",
-                          onPressed: () => Clipboard.setData(ClipboardData(text: adminController.players[index].user)).then((result) {
-                            Fluttertoast.showToast(
-                              msg: "Usuario Copiado!",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.CENTER,
-                              timeInSecForIosWeb: 1,
-                              backgroundColor: colorPrimary,
-                              textColor: Colors.white,
-                              fontSize: 16.0
-                            );
-                          }),
-                        ),
-                      ],
-                    )
-                  ),
-
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(5, 10, 5, 5),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: AutoSizeText.rich(
-                            TextSpan(
                               text: 'Correo Electrónico: ',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,

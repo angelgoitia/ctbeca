@@ -60,6 +60,7 @@ class AdminController extends GetxController {
           players.value = (jsonResponse['players'] as List).map((val) => Player.fromJson(val)).toList();
           globalController.dbctbeca.createOrUpdateAdmin(admin.value);
           globalController.dbctbeca.createOrUpdateListPlayer(players);
+          globalController.getPriceSLP();
           await getDataGraphic();
           Get.off(() => AdminMainPage());
 
@@ -87,7 +88,7 @@ class AdminController extends GetxController {
 
   Future  getDataGraphic() async {
     dataGraphic.value = <MyRow>[];
-    for( var i = 6 ; i >= 1; i-- ) { 
+    for( var i = 15 ; i >= 1; i-- ) { 
       final dateLastSixDays = i == 1? DateTime.now() : DateTime.now().subtract(Duration(days:i-1));
       var statusForeach = false;
       int totalSlp = 0;

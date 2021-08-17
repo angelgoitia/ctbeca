@@ -10,10 +10,22 @@ import 'package:http/http.dart' as http;
 
 class FormController extends GetxController {  
   final player = Player().obs;
-  final messageError = ''.obs, digitsPhone = ''.obs;
+  final messageError = ''.obs, digitsPhone = ''.obs, selectDropdowReference = "Seleccionar".obs;
   final passwordVisible = true.obs, statusError = false.obs, statusErrorPhone = false.obs,
-        imageSelect = false.obs , statusSubmit = false.obs;
+        imageSelect = false.obs , statusErrorQr = false.obs, statusOtherReference = false.obs, statusErrorReference = false.obs;
+  final listReferences = <String>[].obs;
   var fileSelect;
+
+  AdminController adminController = Get.put(AdminController());
+
+  void onInit(){
+    super.onInit();
+    listReferences.add("Seleccionar");
+    for (var item in adminController.players) {
+      listReferences.add(item.name!);
+    }
+    listReferences.add("Otro");
+  }
 
   validateTelegram(String value){
     value = value.trim();
@@ -78,7 +90,6 @@ class FormController extends GetxController {
             'email': player.value.email,
             'reference': player.value.reference,
             'wallet': player.value.wallet,
-            'user': player.value.user,
             'emailGame': player.value.emailGame,
             'passwordGame': player.value.passwordGame,
             'urlPrevius': index >= 0 && imageSelect.value? adminController.players[index].urlCodeQr : null,

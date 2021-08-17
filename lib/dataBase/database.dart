@@ -11,7 +11,7 @@ import 'dart:async';
 class DBctbeca{
 
   static Database? dbInstance;
-  static int versionDB = 1;
+  static int versionDB = 2;
 
   Future<Database> get db async{
     if(dbInstance == null)
@@ -96,7 +96,6 @@ class DBctbeca{
         telegram : list[i]['telegram'],
         urlCodeQr : list[i]['urlCodeQr'],
         reference : list[i]['reference'],
-        user : list[i]['user'],
         emailGame : list[i]['emailGame'],
         wallet : list[i]['wallet'],
         accessToken : list[i]['accessToken'],
@@ -126,7 +125,6 @@ class DBctbeca{
         telegram : list[i]['telegram'],
         urlCodeQr : list[i]['urlCodeQr'],
         reference : list[i]['reference'],
-        user : list[i]['user'],
         emailGame : list[i]['emailGame'],
         wallet : list[i]['wallet'],
         listSlp : await getSlp(list[i]['id']),
@@ -212,9 +210,9 @@ class DBctbeca{
     List<Map> list = await dbConnection.rawQuery('SELECT * FROM players WHERE id = \'${player.id}\' ');
     
     if(list.length == 0)
-      query = 'INSERT INTO players (id, email, name, phone, telegram, urlCodeQr, reference, user, emailGame, wallet, accessToken, tokenFCM) VALUES ( \'${player.id}\', \'${player.email}\', \'${player.name}\', \'${player.phone}\', \'${player.telegram}\', \'${player.urlCodeQr}\', \'${player.reference}\', \'${player.user}\', \'${player.emailGame}\', \'${player.wallet}\', \'${player.accessToken}\', \'${player.tokenFCM}\' )'; 
+      query = 'INSERT INTO players (id, email, name, phone, telegram, urlCodeQr, reference, emailGame, wallet, accessToken, tokenFCM) VALUES ( \'${player.id}\', \'${player.email}\', \'${player.name}\', \'${player.phone}\', \'${player.telegram}\', \'${player.urlCodeQr}\', \'${player.reference}\', \'${player.emailGame}\', \'${player.wallet}\', \'${player.accessToken}\', \'${player.tokenFCM}\' )'; 
     else
-      query = 'UPDATE players SET email=\'${player.email}\', name=\'${player.name}\', phone=\'${player.phone}\', telegram=\'${player.telegram}\', urlCodeQr=\'${player.urlCodeQr}\', reference=\'${player.reference}\', user=\'${player.user}\', emailGame=\'${player.emailGame}\', wallet=\'${player.wallet}\', accessToken=\'${player.accessToken}\', tokenFCM=\'${player.tokenFCM}\' WHERE id = \'${player.id}\' ';
+      query = 'UPDATE players SET email=\'${player.email}\', name=\'${player.name}\', phone=\'${player.phone}\', telegram=\'${player.telegram}\', urlCodeQr=\'${player.urlCodeQr}\', reference=\'${player.reference}\', emailGame=\'${player.emailGame}\', wallet=\'${player.wallet}\', accessToken=\'${player.accessToken}\', tokenFCM=\'${player.tokenFCM}\' WHERE id = \'${player.id}\' ';
     
     await dbConnection.transaction((transaction) async{
       return await transaction.rawInsert(query);

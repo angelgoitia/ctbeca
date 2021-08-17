@@ -47,6 +47,7 @@ class PlayerController extends GetxController {
           player.value = new Player.fromJson(jsonResponse['player']);
           player.value.accessToken = accessToken;
           globalController.dbctbeca.createOrUpdatePlayer(player.value);
+          globalController.getPriceSLP();
           await getDataGraphic();
           Get.off(() => PlayerMainPage());
 
@@ -73,7 +74,7 @@ class PlayerController extends GetxController {
 
   Future getDataGraphic() async {
     dataGraphic.value = <MyRow>[];
-    for( var i = 6 ; i >= 1; i-- ) { 
+    for( var i = 15 ; i >= 1; i-- ) { 
       final dateLastSixDays = i == 1? DateTime.now() : DateTime.now().subtract(Duration(days:i-1));
       var statusForeach = false;
       for (var item in player.value.listSlp!) {

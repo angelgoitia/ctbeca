@@ -1,3 +1,4 @@
+import 'package:ctbeca/controller/globalController.dart';
 import 'package:ctbeca/controller/playerController.dart';
 import 'package:ctbeca/env.dart';
 import 'package:ctbeca/models/myRow.dart';
@@ -7,6 +8,7 @@ import 'package:ctbeca/models/slp.dart';
 import 'package:auto_size_text_pk/auto_size_text_pk.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
+import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:get/get.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:intl/intl.dart';
@@ -20,10 +22,12 @@ class HomeWidget extends StatefulWidget {
 class _HomeWidgetState extends State<HomeWidget> {
 
   DateTime now = new DateTime.now();
-  final DateFormat formatter = DateFormat('yyyy-MM-dd');
+  final DateFormat formatter = DateFormat('dd/MM/yyyy');
+  final lowTotalPrice = MoneyMaskedTextController(initialValue: 0, decimalSeparator: ',', thousandSeparator: '.',  leftSymbol: '\$ ', );
   List<MaterialColor> listColor = [Colors.orange, Colors.blue, Colors.red];
-  List<String> listDate = ["Hoy", "Ayer", "Ultimos 6 Dias"];
+  List<String> listDate = ["Hoy", "Ayer", "Quincenal"];
 
+  GlobalController globalController = Get.put(GlobalController());
   PlayerController playerController = Get.put(PlayerController());
 
   @override
@@ -57,7 +61,7 @@ class _HomeWidgetState extends State<HomeWidget> {
               showWidget(0),
               showWidget(1),
               showWidget(2),
-              showChart(2),
+              showChart(),
             ]
           )
         )
@@ -98,7 +102,7 @@ class _HomeWidgetState extends State<HomeWidget> {
           maxFontSize: 14,
           minFontSize: 14,
         ),
-        subTitleText: "",
+        subTitleText: index != 0? '' : "1 SLP = ${globalController.priceSLP} \$" ,
         icon: AutoSizeText(
           showTotal(index, playerController.player.value.listSlp!).toString(),style: TextStyle(
             color: Colors.black,
@@ -109,13 +113,30 @@ class _HomeWidgetState extends State<HomeWidget> {
           minFontSize: 18,
         ),
       ),
-      content: Row(
-        children: [
-          Icon(Icons.calendar_today),
-          SizedBox(width: 10,),
-          Text(listDate[index]),
-        ],
-      ),
+      content: index != 0?
+        Row(
+          children: [
+            Icon(Icons.calendar_today),
+            SizedBox(width: 10,),
+            Text(listDate[index]),
+          ]
+        )
+      :
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.calendar_today),
+                SizedBox(width: 10,),
+                Text(listDate[index]),
+              ],
+            ),
+            Obx(
+              () => Text(globalController.priceSLP.value == 0? 'Sin Conexión a Internet' : globalController.todayPriceSLP.value)
+            ),
+          ],
+        ),
     );
   }
 
@@ -144,22 +165,34 @@ class _HomeWidgetState extends State<HomeWidget> {
         break;
       case 2:
         final _lastDay = DateTime.now().add(Duration(days:1));
-        final dateLastSixDays = DateTime.now().subtract(Duration(days:7));
+        var daySelect;
+
+        if(DateTime.now().day <= 15)
+          daySelect = 1;
+        else 
+          daySelect = 15;
+
+        final dateBefore = DateTime(DateTime.now().year, DateTime.now().month, daySelect);
         
         for (var item in listSlp) {
           DateTime dateList = DateTime.parse(item.date!);
-          if(dateLastSixDays.isBefore(dateList) && _lastDay.isAfter(dateList)){
+          if(dateBefore.isBefore(dateList) && _lastDay.isAfter(dateList)){
             totalSLP += item.daily!.toInt();
           }
         }
         break;
     }
 
+    if(index == 0){
+      lowTotalPrice.updateValue(totalSLP * globalController.priceSLP.value);
+      globalController.todayPriceSLP.value = lowTotalPrice.text;
+    }
+
     return totalSLP;
   }
 
 
-  showChart(int index)
+  showChart()
   {
     return GFCard(
       shape: RoundedRectangleBorder(
@@ -249,7 +282,7 @@ class _HomeWidgetState extends State<HomeWidget> {
             children: [
               Icon(Icons.calendar_today),
               SizedBox(width: 10,),
-              Text(listDate[index]),
+              Text("Últimos 15 días"),
             ],
           ),
         ],
