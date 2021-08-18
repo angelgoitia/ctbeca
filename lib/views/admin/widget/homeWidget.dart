@@ -23,7 +23,7 @@ class _HomeWidgetState extends State<HomeWidget> {
   final DateFormat formatter = DateFormat('dd/MM/yyyy');
   final lowTotalPrice = new MoneyMaskedTextController(initialValue: 0, decimalSeparator: ',', thousandSeparator: '.',  leftSymbol: '\$ ', );
   List<MaterialColor> listColor = [Colors.orange, Colors.blue, Colors.red];
-  List<String> listDate = ["Hoy", "Ayer", "Quincenal"];
+  List<String> listDate = ["Hoy", "Ayer", "Sin Reclamar"];
 
 
   GlobalController globalController = Get.put(GlobalController());
@@ -167,16 +167,9 @@ class _HomeWidgetState extends State<HomeWidget> {
         break;
       case 2:
         final _lastDay = DateTime.now().add(Duration(days:1));
-        var daySelect;
-
-        if(DateTime.now().day <= 15)
-          daySelect = 1;
-        else 
-          daySelect = 15;
-
-        final dateBefore = DateTime(DateTime.now().year, DateTime.now().month, daySelect);
 
         for (var player in players) {
+          final dateBefore = DateTime.parse(player.dateClaim!).subtract(Duration(days:1));
           for (var item in player.listSlp!) {
             DateTime dateList = DateTime.parse(item.date!);
             if(dateBefore.isBefore(dateList) && _lastDay.isAfter(dateList)){
