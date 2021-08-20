@@ -95,19 +95,14 @@ class _PlayerMainPageState extends State<PlayerMainPage> with SingleTickerProvid
             ),
           ],
         ),
-        floatingActionButton: Obx(
-          () => Visibility(
-            visible: globalController.indexController.value <= 1? true : false,
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 80),
-              child: FloatingActionButton(
-                onPressed: () => playerController.getPlayer(true),
-                child: globalController.indexController.value == 0? Icon(Icons.sync_rounded) : Icon(Icons.add),
-                backgroundColor: colorPrimary,
-              )
-            )
+        floatingActionButton:  Padding(
+          padding: EdgeInsets.only(bottom: 80),
+          child: FloatingActionButton(
+            onPressed: () => playerController.getPlayer(true),
+            child: Icon(Icons.sync_rounded),
+            backgroundColor: colorPrimary,
           ),
-        )
+        ),
       ),
     );
   }

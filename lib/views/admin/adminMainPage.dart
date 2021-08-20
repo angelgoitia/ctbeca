@@ -98,21 +98,18 @@ class _AdminMainPageState extends State<AdminMainPage> with SingleTickerProvider
           ],
         ),
         floatingActionButton: Obx(
-          () => Visibility(
-            visible: globalController.indexController.value <= 1? true : false,
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 80),
-              child: FloatingActionButton(
-                onPressed: () {
-                  if(globalController.indexController.value == 0){
-                    adminController.getAdmin(true);
-                  }
-                  else
-                    Get.to(() => NewPlayerPage(-1), transition: Transition.zoom);
-                },
-                child: globalController.indexController.value == 0? Icon(Icons.sync_rounded) : Icon(Icons.add),
-                backgroundColor: colorPrimary,
-              )
+          () => Padding(
+            padding: EdgeInsets.only(bottom: 80),
+            child: FloatingActionButton(
+              onPressed: () {
+                if(globalController.indexController.value != 1){
+                  adminController.getAdmin(true);
+                }
+                else
+                  Get.to(() => NewPlayerPage(-1), transition: Transition.zoom);
+              },
+              child: globalController.indexController.value == 1? Icon(Icons.add) : Icon(Icons.sync_rounded),
+              backgroundColor: colorPrimary,
             )
           ),
         )

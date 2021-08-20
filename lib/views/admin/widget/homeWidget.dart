@@ -146,11 +146,12 @@ class _HomeWidgetState extends State<HomeWidget> {
     switch (index) {
       case 0:
         for (var player in players) {
-          if(player.listSlp!.length >0) break;
-          DateTime dateList = DateTime.parse(player.listSlp![player.listSlp!.length -1].date!);
-          if(dateList.day == now.day && dateList.month == now.month && dateList.year == now.year){
-            totalSLP += player.listSlp![player.listSlp!.length -1].daily!.toInt();
-          } 
+          if(player.listSlp!.length >0){
+            DateTime dateList = DateTime.parse(player.listSlp![player.listSlp!.length -1].date!);
+            if(dateList.day == now.day && dateList.month == now.month && dateList.year == now.year){
+              totalSLP += player.listSlp![player.listSlp!.length -1].daily!.toInt();
+            } 
+          }
         }
         break;
       case 1:

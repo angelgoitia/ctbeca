@@ -13,7 +13,7 @@ import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GlobalController extends GetxController { 
-  final indexSelect = 0.obs, indexController = 0.obs, priceSLP=0.00.obs, todayPriceSLP=''.obs; 
+  final indexSelect = 0.obs, indexController = 0.obs, priceSLP=0.00.obs, todayPriceSLP=''.obs;
 
   DateTime? currentBackPressTime; 
   DBctbeca dbctbeca = DBctbeca();
