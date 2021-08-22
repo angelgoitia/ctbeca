@@ -1,6 +1,5 @@
 import 'package:ctbeca/controller/globalController.dart';
 import 'package:ctbeca/env.dart';
-import 'package:ctbeca/models/history.dart';
 import 'package:ctbeca/models/myRow.dart';
 import 'package:ctbeca/models/player.dart';
 import 'package:ctbeca/views/player/playerMainPage.dart';
@@ -14,7 +13,6 @@ import 'package:http/http.dart' as http;
 class PlayerController extends GetxController {
   final player = Player().obs;
   final dataGraphic = <MyRow>[].obs;
-  final histories = <History>[].obs;
   final statusPoints = false.obs;
   final selectMyRow = MyRow().obs;
   
@@ -37,7 +35,7 @@ class PlayerController extends GetxController {
             'authorization': 'Bearer ${player.value.accessToken}',
           },
         ); // petición api
-
+        print("token: ${player.value.accessToken}");
         print(response.body);
         jsonResponse = jsonDecode(response.body);
 

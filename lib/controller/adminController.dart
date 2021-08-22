@@ -1,7 +1,7 @@
 import 'package:ctbeca/controller/globalController.dart';
 import 'package:ctbeca/env.dart';
 import 'package:ctbeca/models/admin.dart';
-import 'package:ctbeca/models/history.dart';
+import 'package:ctbeca/models/claim.dart';
 import 'package:ctbeca/models/myRow.dart';
 import 'package:ctbeca/models/player.dart';
 import 'package:ctbeca/views/admin/adminMainPage.dart';
@@ -15,7 +15,6 @@ class AdminController extends GetxController {
   final admin = Admin().obs;
   final players = <Player>[].obs;
   final dataGraphic = <MyRow>[].obs;
-  final histories = <History>[].obs;
   final statusPoints = false.obs;
   final selectMyRow = MyRow().obs;
 

@@ -1,7 +1,7 @@
 import 'package:ctbeca/controller/globalController.dart';
 import 'package:ctbeca/controller/playerController.dart';
 import 'package:ctbeca/env.dart';
-import 'package:ctbeca/views/player/widget/historyWidget.dart';
+import 'package:ctbeca/views/player/widget/claimWidget.dart';
 import 'package:ctbeca/views/player/widget/playerWidget.dart';
 import 'package:ctbeca/views/player/widget/slpWidget.dart';
 import 'package:ctbeca/views/player/widget/homeWidget.dart';
@@ -58,7 +58,7 @@ class _PlayerMainPageState extends State<PlayerMainPage> with SingleTickerProvid
                   HomeWidget(),
                   PLayerWidget(),
                   SlpWidget(),
-                  HistoryWidget(),
+                  ClaimWidget(),
                 ]
               ),
             ),
@@ -89,7 +89,7 @@ class _PlayerMainPageState extends State<PlayerMainPage> with SingleTickerProvid
                 ),
                 Tab(
                   icon: Icon(Icons.request_quote_rounded),
-                  text: "Historial",
+                  text: "Reclamos",
                 ),
               ],
             ),

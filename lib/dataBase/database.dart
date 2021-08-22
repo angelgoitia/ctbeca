@@ -1,5 +1,6 @@
 import 'package:ctbeca/models/admin.dart';
 import 'package:ctbeca/models/animal.dart';
+import 'package:ctbeca/models/claim.dart';
 import 'package:ctbeca/models/player.dart';
 import 'package:ctbeca/models/slp.dart';
 import 'package:path_provider/path_provider.dart';
@@ -42,9 +43,10 @@ class DBctbeca{
   void onCreateFunc(Database db, int version) async{
     //create table
     await db.execute('CREATE TABLE IF NOT EXISTS admin (id INTEGER PRIMARY KEY AUTOINCREMENT, accessToken Text, tokenFCM Text)');
-    await db.execute('CREATE TABLE IF NOT EXISTS animals (id INTEGER, playerId int, name VARCHAR(50), code VARCHAR(50), type VARCHAR(50), nomenclature VARCHAR(50), image Text)');
+    await db.execute('CREATE TABLE IF NOT EXISTS animals (id INTEGER, playerId INTEGER, name VARCHAR(50), code VARCHAR(50), type VARCHAR(50), nomenclature VARCHAR(50), image Text)');
     await db.execute('CREATE TABLE IF NOT EXISTS players (id INTEGER, name VARCHAR(50), email VARCHAR(50), phone VARCHAR(20), telegram VARCHAR(50), urlCodeQr Text, reference VARCHAR(50), user VARCHAR(50), emailGame VARCHAR(50), wallet Text, accessToken Text, tokenFCM Text, dateClaim VARCHAR(20) )');
-    await db.execute('CREATE TABLE IF NOT EXISTS slp (id INTEGER, playerId int, total INTEGER, daily INTEGER, createdAt VARCHAR(50), date VARCHAR(20))');
+    await db.execute('CREATE TABLE IF NOT EXISTS slp (id INTEGER, playerId INTEGER, total INTEGER, daily INTEGER, createdAt VARCHAR(50), date VARCHAR(20))');
+    await db.execute('CREATE TABLE IF NOT EXISTS claims (id INTEGER, playerId INTEGER, total INTEGER, totalManager INTEGER, totalPlayer INTEGER, date VARCHAR(20))');
   }
 
   /*
@@ -58,6 +60,7 @@ class DBctbeca{
     await dbConnection.execute('DROP TABLE IF EXISTS animals');
     await dbConnection.execute('DROP TABLE IF EXISTS players');
     await dbConnection.execute('DROP TABLE IF EXISTS slp');
+    await dbConnection.execute('DROP TABLE IF EXISTS claims');
   
     onCreateFunc(dbConnection, versionDB);
   }
@@ -131,6 +134,7 @@ class DBctbeca{
         dateClaim: list[i]['dateClaim'],
         listSlp : await getSlp(list[i]['id']),
         listAnimals : await getAnimals(list[i]['id']),
+        listClaims: await getClaims(list[i]['id']),
       );
 
       listPlayers.add(player);
@@ -188,6 +192,30 @@ class DBctbeca{
 
     return listAnimals;
   }
+
+  Future getClaims(idPlayer) async{
+    var dbConnection = await db;
+
+    List<Map> list = await dbConnection.rawQuery('SELECT * FROM claims WHERE playerId = \'$idPlayer\' ');
+    List<Claim>listClaims = [];
+    Claim claim = new Claim();
+
+    for(int i = 0; i< list.length; i++)
+    {
+      claim = Claim(
+        id : list[i]['id'],
+        playerId : list[i]['playerId'],
+        date : list[i]['date'],
+        total : list[i]['total'],
+        totalManager : list[i]['totalManager'],
+        totalPlayer : list[i]['totalplayer'],
+      );
+
+      listClaims.add(claim);
+    }
+
+    return listClaims;
+  }
   
 
   void createOrUpdateAdmin(Admin admin) async{
@@ -222,6 +250,7 @@ class DBctbeca{
 
     createOrUpdateListSlp(player.listSlp!);
     createOrUpdateListAnimals(player.listAnimals!);
+    createOrUpdateListClaims(player.listClaims!);
   }
 
   void createOrUpdateListSlp(List<Slp> listSlp){
@@ -262,6 +291,29 @@ class DBctbeca{
       query = 'INSERT INTO animals (id, playerId, name, code, type, nomenclature, image) VALUES ( \'${animal.id}\', \'${animal.playerId}\', \'${animal.name}\', \'${animal.code}\', \'${animal.type}\', \'${animal.nomenclature}\', \'${animal.image}\' )';
     else
       query = 'UPDATE animals SET playerId=\'${animal.playerId}\', name=\'${animal.name}\', code=\'${animal.code}\', type=\'${animal.type}\', nomenclature=\'${animal.nomenclature}\', image=\'${animal.image}\' WHERE id = \'${animal.id}\' ';
+    
+
+    await dbConnection.transaction((transaction) async{
+      return await transaction.rawInsert(query);
+    });
+  }
+
+  void createOrUpdateListClaims(List<Claim> listClaims){
+    for (var claim in listClaims) {
+      createOrUpdateClaim(claim);
+    }
+  }
+
+  void createOrUpdateClaim(Claim claim) async{
+    var dbConnection = await db;
+
+    String query;
+    List<Map> list = await dbConnection.rawQuery('SELECT * FROM claims WHERE id = \'${claim.id}\' ');
+    
+    if(list.length == 0)
+      query = 'INSERT INTO claims (id, playerId, date, total, totalManager, totalPlayer) VALUES ( \'${claim.id}\', \'${claim.playerId}\', \'${claim.date}\', \'${claim.total}\', \'${claim.totalManager}\', \'${claim.totalPlayer}\')';
+    else
+      query = 'UPDATE claims SET playerId=\'${claim.playerId}\', date=\'${claim.date}\', total=\'${claim.total}\', totalManager=\'${claim.totalManager}\', totalPlayer=\'${claim.totalPlayer}\' WHERE id = \'${claim.id}\' ';
     
 
     await dbConnection.transaction((transaction) async{

@@ -11,13 +11,13 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 
-class AllSlpWidget extends StatefulWidget {
+class SlpsWidget extends StatefulWidget {
 
   @override
-  _AllSlpWidgetState createState() => _AllSlpWidgetState();
+  _SlpsWidgetState createState() => _SlpsWidgetState();
 }
 
-class _AllSlpWidgetState extends State<AllSlpWidget> {
+class _SlpsWidgetState extends State<SlpsWidget> {
   final DateFormat formatterBD = DateFormat('yyyy-MM-dd');
   final DateFormat formatter = DateFormat('dd/MM/yyyy');
   var controllerInitialDate = TextEditingController(), controllerFinalDate = TextEditingController();
@@ -57,7 +57,7 @@ class _AllSlpWidgetState extends State<AllSlpWidget> {
     return adminController.players.length == 0? 
       Center(
         child: AutoSizeText(
-          "No hay becados",
+          "No hay becado",
           style: TextStyle(
             color: Colors.black87,
             fontWeight:  FontWeight.normal,

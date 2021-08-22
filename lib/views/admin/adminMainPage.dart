@@ -2,9 +2,9 @@ import 'package:ctbeca/controller/adminController.dart';
 import 'package:ctbeca/controller/globalController.dart';
 import 'package:ctbeca/env.dart';
 import 'package:ctbeca/views/admin/newPlayerPage.dart';
-import 'package:ctbeca/views/admin/widget/allHistoryWidget.dart';
-import 'package:ctbeca/views/admin/widget/allPlayerWidget.dart';
-import 'package:ctbeca/views/admin/widget/allSlpWidget.dart';
+import 'package:ctbeca/views/admin/widget/claimsWidget.dart';
+import 'package:ctbeca/views/admin/widget/playersWidget.dart';
+import 'package:ctbeca/views/admin/widget/slpsWidget.dart';
 import 'package:ctbeca/views/admin/widget/homeWidget.dart';
 import 'package:ctbeca/views/navbar/navbar.dart';
 
@@ -57,9 +57,9 @@ class _AdminMainPageState extends State<AdminMainPage> with SingleTickerProvider
                 physics: NeverScrollableScrollPhysics(),
                 children: <Widget>[
                   HomeWidget(),
-                  AllPlayerWidget(),
-                  AllSlpWidget(),
-                  AllHistoryWidget(),
+                  PlayersWidget(),
+                  SlpsWidget(),
+                  ClaimsWidget(),
                 ]
               ),
             ),
@@ -90,7 +90,7 @@ class _AdminMainPageState extends State<AdminMainPage> with SingleTickerProvider
                 ),
                 Tab(
                   icon: Icon(Icons.request_quote_rounded),
-                  text: "Historial",
+                  text: "Reclamos",
                 ),
               ],
               
