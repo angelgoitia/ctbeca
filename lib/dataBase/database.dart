@@ -42,7 +42,7 @@ class DBctbeca{
 
   void onCreateFunc(Database db, int version) async{
     //create table
-    await db.execute('CREATE TABLE IF NOT EXISTS admin (id INTEGER PRIMARY KEY AUTOINCREMENT, accessToken Text, tokenFCM Text)');
+    await db.execute('CREATE TABLE IF NOT EXISTS admin (id INTEGER, accessToken Text, tokenFCM Text, name VARCHAR(50))');
     await db.execute('CREATE TABLE IF NOT EXISTS animals (id INTEGER, playerId INTEGER, name VARCHAR(50), code VARCHAR(50), type VARCHAR(50), nomenclature VARCHAR(50), image Text)');
     await db.execute('CREATE TABLE IF NOT EXISTS players (id INTEGER, name VARCHAR(50), email VARCHAR(50), phone VARCHAR(20), telegram VARCHAR(50), urlCodeQr Text, reference VARCHAR(50), user VARCHAR(50), emailGame VARCHAR(50), wallet Text, accessToken Text, tokenFCM Text, dateClaim VARCHAR(20) )');
     await db.execute('CREATE TABLE IF NOT EXISTS slp (id INTEGER, playerId INTEGER, total INTEGER, daily INTEGER, createdAt VARCHAR(50), date VARCHAR(20))');
@@ -66,10 +66,10 @@ class DBctbeca{
   }
 
   // Get User
-  Future <Admin> getAdmin() async{
+  Future <Admin> getAdmin(accessToken) async{
     var dbConnection = await db;
 
-    List<Map> list = await dbConnection.rawQuery('SELECT * FROM admin WHERE id = 1');
+    List<Map> list = await dbConnection.rawQuery('SELECT * FROM admin WHERE accessToken = \'$accessToken\' ');
     Admin admin = new Admin();
 
     for(int i = 0; i< list.length; i++)

@@ -77,7 +77,7 @@ class AdminController extends GetxController {
         await Future.delayed(Duration(seconds: 1));
         Get.back();
       }else{
-        admin.value = await globalController.dbctbeca.getAdmin();
+        admin.value = await globalController.dbctbeca.getAdmin(admin.value.accessToken);
         players.value = await globalController.dbctbeca.getPlayers();
         Get.off(() => AdminMainPage());
       }
