@@ -312,7 +312,7 @@ class _ClaimsWidgetState extends State<ClaimsWidget> {
         selected: isSelected,
         title: Text(item.name!),
         subtitle: Text(item.email!),
-        trailing: Text(item.telegram!),
+        trailing: Text(item.group!.nameGroup!),
       ),
     );
   }

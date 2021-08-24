@@ -1,7 +1,6 @@
 import 'package:ctbeca/controller/globalController.dart';
 import 'package:ctbeca/env.dart';
 import 'package:ctbeca/models/admin.dart';
-import 'package:ctbeca/models/claim.dart';
 import 'package:ctbeca/models/myRow.dart';
 import 'package:ctbeca/models/player.dart';
 import 'package:ctbeca/views/admin/adminMainPage.dart';
@@ -13,6 +12,7 @@ import 'package:http/http.dart' as http;
 
 class AdminController extends GetxController {
   final admin = Admin().obs;
+  final admins = <Admin>[].obs;
   final players = <Player>[].obs;
   final dataGraphic = <MyRow>[].obs;
   final statusPoints = false.obs;
@@ -56,8 +56,10 @@ class AdminController extends GetxController {
           String? accessToken = admin.value.accessToken;
           admin.value = new Admin.fromJson(jsonResponse['admin']);
           admin.value.accessToken = accessToken;
+          admins.value = (jsonResponse['admins'] as List).map((val) => Admin.fromJson(val)).toList();
           players.value = (jsonResponse['players'] as List).map((val) => Player.fromJson(val)).toList();
           globalController.dbctbeca.createOrUpdateAdmin(admin.value);
+          globalController.dbctbeca.createOrUpdateListAdmins(admins);
           globalController.dbctbeca.createOrUpdateListPlayer(players);
           globalController.getPriceSLP();
           await getDataGraphic();
@@ -78,6 +80,7 @@ class AdminController extends GetxController {
         Get.back();
       }else{
         admin.value = await globalController.dbctbeca.getAdmin(admin.value.accessToken);
+        admins.value = await globalController.dbctbeca.getAdmins(admin.value.id);
         players.value = await globalController.dbctbeca.getPlayers();
         Get.off(() => AdminMainPage());
       }

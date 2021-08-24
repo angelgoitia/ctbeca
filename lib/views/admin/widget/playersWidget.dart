@@ -62,18 +62,68 @@ class _PlayersWidgetState extends State<PlayersWidget> {
                       fontWeight: FontWeight.w700,
                       fontFamily: 'MontserratBold',
                     ),
-                    minFontSize: 12,
-                    maxFontSize: 12,
+                    minFontSize: 14,
+                    maxFontSize: 14,
                   ),
-                  subtitle: AutoSizeText(
-                    adminController.players[index].telegram!,
-                    style: TextStyle(
-                      color: colorText,
-                      fontWeight: FontWeight.w700,
-                      fontFamily: 'MontserratBold',
-                    ),
-                    minFontSize: 10,
-                    maxFontSize: 10,
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 5,),
+                      Row(
+                        children: [
+                          AutoSizeText(
+                            "Telegram:",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w700,
+                              fontFamily: 'MontserratBold',
+                            ),
+                            minFontSize: 10,
+                            maxFontSize: 10,
+                          ),
+                          SizedBox(width: 5,),
+                          AutoSizeText(
+                            adminController.players[index].telegram!,
+                            style: TextStyle(
+                              color: colorText,
+                              fontWeight: FontWeight.w700,
+                              fontFamily: 'MontserratBold',
+                            ),
+                            minFontSize: 10,
+                            maxFontSize: 10,
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 5,),
+                      Visibility(
+                        visible: adminController.admin.value.id == 1? true : false,
+                        child: Row(
+                          children: [
+                            AutoSizeText(
+                              "Grupo:",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w700,
+                                fontFamily: 'MontserratBold',
+                              ),
+                              minFontSize: 10,
+                              maxFontSize: 10,
+                            ),
+                            SizedBox(width: 5,),
+                            AutoSizeText(
+                              adminController.players[index].group!.nameGroup!,
+                              style: TextStyle(
+                                color: colorText,
+                                fontWeight: FontWeight.w700,
+                                fontFamily: 'MontserratBold',
+                              ),
+                              minFontSize: 10,
+                              maxFontSize: 10,
+                            ),
+                          ],
+                        )
+                      )
+                    ],
                   ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,

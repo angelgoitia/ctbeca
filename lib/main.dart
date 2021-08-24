@@ -16,9 +16,11 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'CTBeca',
       theme: ThemeData(
+        hoverColor: colorPrimary,
         primaryColor: colorPrimary,
         accentColor: colorPrimary,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+        visualDensity: VisualDensity.adaptivePlatformDensity, 
+        textSelectionTheme: TextSelectionThemeData(cursorColor: colorPrimary, selectionColor: colorPrimary),
       ),
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate

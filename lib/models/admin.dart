@@ -1,15 +1,15 @@
 class Admin{
   int? id;
-  String? accessToken, tokenFCM, name;
+  String? accessToken, tokenFCM, name, nameGroup;
 
-  Admin({this.id, this.accessToken, this.tokenFCM, this.name});
+  Admin({this.id, this.accessToken, this.tokenFCM, this.name, this.nameGroup});
 
   factory  Admin.fromJson(Map<String, dynamic> json) {
     return new Admin(
       id: json['id'],
-      accessToken : json['access_token'],
       tokenFCM : json['tokenFCM'],
       name : json['name'],
+      nameGroup : json['nameGroup'],
     );
   }
 

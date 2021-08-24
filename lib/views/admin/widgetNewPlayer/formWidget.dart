@@ -6,6 +6,8 @@ import 'package:ctbeca/controller/formController.dart';
 import 'package:ctbeca/env.dart';
 
 import 'package:auto_size_text_pk/auto_size_text_pk.dart';
+import 'package:ctbeca/models/admin.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -300,95 +302,91 @@ class _FormWidgetState extends State<FormWidget> {
               ),
             ),
 
+            Obx(
+              () => Visibility(
+                visible: adminController.admin.value.id == 1? true : false,
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(30.0, 20.0, 30.0, 0.0),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.group,
+                        color: colorPrimary,
+                      ),
+                      SizedBox(width: 15,),
+                      Expanded(
+                        child: DropdownSearch<Admin>(
+                          selectedItem: formController.selectDropdowGroup.value,
+                          items: formController.listGroups,
+                          dropdownBuilder: _customDropDownAdmin,
+                          popupItemBuilder: _customPopupItemBuilderAdmin,
+                          onSaved: (Admin? value) => adminController.admin.value.id == 1? formController.player.value.adminId = value!.id : adminController.admin.value.id,
+                          validator: (Admin? value){
+                            if(value!.nameGroup == "Seleccionar")
+                              return "Debe seleccionar un grupo";
+                            
+                            return null;
+                          },
+                          onChanged: (Admin? newValue) {
+                            
+                            formController.selectDropdowGroup.value = newValue!;
+                            
+                          },
+                        )
+                      ), 
+                    ],
+                  )
+                )
+              ),
+            ),
+            
 
             Padding(
               padding: EdgeInsets.fromLTRB(30.0, 20.0, 30.0, 0.0),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.supervisor_account,
+                  ImageIcon(
+                    AssetImage("assets/icons/reference.png"),
                     color: colorPrimary,
+                    size: 18,
                   ),
 
                   SizedBox(width: 15,),
 
                   Obx(
-                    () => DropdownButton<String>(
-                      value: formController.selectDropdowReference.value,
-                      icon: Icon(Icons.arrow_drop_down, color: colorPrimary),
-                      elevation: 16,
-                      underline: Container(
-                        height: 2,
-                        color: formController.statusErrorReference.value? Colors.red : colorPrimary,
-                      ),
-                      style: TextStyle(
-                        fontFamily: 'MontserratSemiBold',
-                        fontSize:14
-                      ),
-                      onChanged: (String? newValue) {
-                        if(newValue == "Seleccionar"){
-                          formController.statusOtherReference.value = false;
-                          Fluttertoast.showToast(
-                            msg: "Debe seleccionar una referencia!",
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.CENTER,
-                            timeInSecForIosWeb: 1,
-                            backgroundColor: colorPrimary,
-                            textColor: Colors.white,
-                            fontSize: 16.0
-                          );
-                        }
-                        else if(newValue == "Otro"){
-                          formController.statusOtherReference.value = true;
-                          FocusScope.of(context).requestFocus(_referenceFocus);
-                        }
-                        else{
-                          formController.statusOtherReference.value = false;
-                          FocusScope.of(context).requestFocus(_walletFocus);
-                        }
-                        
-                        formController.statusErrorReference.value = false;
-                        formController.selectDropdowReference.value = newValue!;
-                        formController.player.value.reference = newValue;
-                      },
-                      items: formController.listReferences.map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: AutoSizeText(
-                              value,
-                              style: TextStyle(
-                                color: colorText,
-                                fontFamily: 'MontserratSemiBold',
-                                fontSize:14
-                              ),
-                              maxFontSize: 18,
-                              minFontSize: 18,
-                            ),
-                          );
-                      }).toList(),
-                    ),
-                  ),
-                ],
-              )
-            ),
-
-            Obx(
-              () => Visibility(
-                visible: formController.statusErrorReference.value,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(30.0, 5.0, 30.0, 0.0),
-                  child: Center(
-                    child: AutoSizeText(
-                      'Selecionar una referencia',
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontFamily: 'MontserratSemiBold',
-                      ),
-                      maxFontSize: 14,
-                      minFontSize: 14,
+                    () => Expanded(
+                      child: DropdownSearch<String>(
+                        selectedItem: formController.selectDropdowReference.value,
+                        items: formController.listReferences,
+                        dropdownBuilder: _customDropDownString,
+                        popupItemBuilder: _customPopupItemBuilderString,
+                        validator: (String? value){
+                          if(value == "Seleccionar")
+                            return "Debe seleccionar una referencia";
+                          return null;
+                        },
+                        onChanged: (String? newValue) {
+                          
+                          if(newValue == "Seleccionar"){
+                            formController.statusOtherReference.value = false;
+                          }
+                          else if(newValue == "Otro"){
+                            formController.statusOtherReference.value = true;
+                            FocusScope.of(context).requestFocus(_referenceFocus);
+                          }
+                          else{
+                            formController.statusOtherReference.value = false;
+                            FocusScope.of(context).requestFocus(_walletFocus);
+                          }
+                          
+                          formController.selectDropdowReference.value = newValue!;
+                          formController.player.value.reference = newValue;
+                          
+                        },
+                      )
                     )
                   ),
-                )
+                ],
               )
             ),
 
@@ -856,18 +854,77 @@ class _FormWidgetState extends State<FormWidget> {
     else
       formController.statusErrorPhone.value = false;
 
-    if(formController.selectDropdowReference.value == 'Seleccionar')
-      formController.statusErrorReference.value = true;
-    else 
-      formController.statusErrorReference.value = false;
-
-    print("referencia1: ${formController.player.value.reference}");
-
-    if(_formKeyNewPlayer.currentState!.validate() && !formController.statusErrorPhone.value && !formController.statusErrorQr.value && formController.selectDropdowReference.value != 'Seleccionar'){
+    if(_formKeyNewPlayer.currentState!.validate() && !formController.statusErrorPhone.value && !formController.statusErrorQr.value){
       _formKeyNewPlayer.currentState!.save();
       _passwordController.clear();
       formController.submitForm(index);
     } 
+  }
+
+  Widget _customDropDownAdmin(BuildContext context, Admin? item, String itemDesignation) {
+    if (item == null) {
+      return Container();
+    }
+
+    return Container(
+      child: (item.nameGroup == null)
+      ? ListTile(
+          contentPadding: EdgeInsets.all(0),
+          title: Text("Sin seleccionar un Grupo"),
+        )
+      : ListTile(
+          contentPadding: EdgeInsets.all(0),
+          title: Text(item.nameGroup!),
+        ),
+    );
+  }
+
+  Widget _customPopupItemBuilderAdmin(BuildContext context, Admin item, bool isSelected) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 8),
+      decoration: !isSelected
+          ? null
+          : BoxDecoration(
+              border: Border.all(color: Theme.of(context).primaryColor),
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.white,
+            ),
+      child: ListTile(
+        selected: isSelected,
+        title: Text(item.nameGroup!),
+        subtitle: Text(item.name!),
+      ),
+    );
+  }
+
+  Widget _customDropDownString(BuildContext context, String? item, String itemDesignation) {
+    if (item == null) {
+      return Container();
+    }
+
+    return Container(
+      child: ListTile(
+          contentPadding: EdgeInsets.all(0),
+          title: Text(item),
+        ),
+    );
+  }
+
+  Widget _customPopupItemBuilderString(BuildContext context, String item, bool isSelected) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 8),
+      decoration: !isSelected
+          ? null
+          : BoxDecoration(
+              border: Border.all(color: Theme.of(context).primaryColor),
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.white,
+            ),
+      child: ListTile(
+        selected: isSelected,
+        title: Text(item),
+      ),
+    );
   }
 
 }

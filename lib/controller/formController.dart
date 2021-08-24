@@ -1,6 +1,7 @@
 import 'package:ctbeca/controller/adminController.dart';
 import 'package:ctbeca/controller/globalController.dart';
 import 'package:ctbeca/env.dart';
+import 'package:ctbeca/models/admin.dart';
 import 'package:ctbeca/models/player.dart';
 
 import 'dart:convert';
@@ -10,21 +11,26 @@ import 'package:http/http.dart' as http;
 
 class FormController extends GetxController {  
   final player = Player().obs;
-  final messageError = ''.obs, digitsPhone = ''.obs, selectDropdowReference = "Seleccionar".obs;
+  final messageError = ''.obs, digitsPhone = ''.obs, selectDropdowReference = "Seleccionar".obs, selectDropdowGroup = Admin(id: 0, nameGroup: "Seleccionar").obs;
   final passwordVisible = true.obs, statusError = false.obs, statusErrorPhone = false.obs,
-        imageSelect = false.obs , statusErrorQr = false.obs, statusOtherReference = false.obs, statusErrorReference = false.obs;
-  final listReferences = <String>[].obs;
+        imageSelect = false.obs , statusErrorQr = false.obs, statusOtherReference = false.obs;
+  final listReferences = <String>["Seleccionar"].obs, listGroups = <Admin>[Admin(id: 0, name: "Seleccionar", nameGroup: "Seleccionar")].obs;
   var fileSelect;
 
   AdminController adminController = Get.put(AdminController());
 
   void onInit(){
     super.onInit();
-    listReferences.add("Seleccionar");
+
     for (var item in adminController.players) {
       listReferences.add(item.name!);
     }
     listReferences.add("Otro");
+
+    for (var item in adminController.admins) {
+      listGroups.add(item);
+    }
+
   }
 
   validateTelegram(String value){
@@ -89,6 +95,7 @@ class FormController extends GetxController {
             'telegram': player.value.telegram,
             'email': player.value.email,
             'reference': player.value.reference,
+            'group': adminController.admin.value.id == 1? player.value.adminId : adminController.admin.value.id,
             'wallet': player.value.wallet,
             'emailGame': player.value.emailGame,
             'passwordGame': player.value.passwordGame,

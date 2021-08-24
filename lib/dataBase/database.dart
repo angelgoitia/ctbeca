@@ -42,9 +42,9 @@ class DBctbeca{
 
   void onCreateFunc(Database db, int version) async{
     //create table
-    await db.execute('CREATE TABLE IF NOT EXISTS admin (id INTEGER, accessToken Text, tokenFCM Text, name VARCHAR(50))');
+    await db.execute('CREATE TABLE IF NOT EXISTS admin (id INTEGER, accessToken Text, tokenFCM Text, name VARCHAR(50), nameGroup VARCHAR(50))');
     await db.execute('CREATE TABLE IF NOT EXISTS animals (id INTEGER, playerId INTEGER, name VARCHAR(50), code VARCHAR(50), type VARCHAR(50), nomenclature VARCHAR(50), image Text)');
-    await db.execute('CREATE TABLE IF NOT EXISTS players (id INTEGER, name VARCHAR(50), email VARCHAR(50), phone VARCHAR(20), telegram VARCHAR(50), urlCodeQr Text, reference VARCHAR(50), user VARCHAR(50), emailGame VARCHAR(50), wallet Text, accessToken Text, tokenFCM Text, dateClaim VARCHAR(20) )');
+    await db.execute('CREATE TABLE IF NOT EXISTS players (id INTEGER, name VARCHAR(50), email VARCHAR(50), phone VARCHAR(20), telegram VARCHAR(50), urlCodeQr Text, reference VARCHAR(50), emailGame VARCHAR(50), wallet Text, accessToken Text, tokenFCM Text, dateClaim VARCHAR(20), adminId INTEGER )');
     await db.execute('CREATE TABLE IF NOT EXISTS slp (id INTEGER, playerId INTEGER, total INTEGER, daily INTEGER, createdAt VARCHAR(50), date VARCHAR(20))');
     await db.execute('CREATE TABLE IF NOT EXISTS claims (id INTEGER, playerId INTEGER, total INTEGER, totalManager INTEGER, totalPlayer INTEGER, date VARCHAR(20))');
   }
@@ -65,7 +65,6 @@ class DBctbeca{
     onCreateFunc(dbConnection, versionDB);
   }
 
-  // Get User
   Future <Admin> getAdmin(accessToken) async{
     var dbConnection = await db;
 
@@ -75,6 +74,9 @@ class DBctbeca{
     for(int i = 0; i< list.length; i++)
     {
       admin = Admin(
+        id : list[i]['id'],
+        name : list[i]['name'],
+        nameGroup : list[i]['nameGroup'],
         accessToken : list[i]['accessToken'],
         tokenFCM : list[i]['tokenFCM'],
       );
@@ -106,10 +108,33 @@ class DBctbeca{
         tokenFCM : list[i]['tokenFCM'],
         listSlp : await getSlp(list[i]['id']),
         listAnimals : await getAnimals(list[i]['id']),
+        listClaims: await getClaims(list[i]['id'])
       );
     }
 
     return player;
+  }
+
+  Future <List<Admin>> getAdmins(adminId) async{
+    var dbConnection = await db;
+
+    List<Map> list = await dbConnection.rawQuery('SELECT * FROM admin where id <> \'$adminId\' ');
+    List<Admin>listAdmins = [];
+    Admin admin = new Admin();
+
+    for(int i = 0; i< list.length; i++)
+    {
+      admin = Admin(
+        id : list[i]['id'],
+        name : list[i]['name'],
+        nameGroup : list[i]['nameGroup'],
+      );
+
+      listAdmins.add(admin);
+    }
+
+    return listAdmins;
+
   }
 
   Future <List<Player>> getPlayers() async{
@@ -132,6 +157,8 @@ class DBctbeca{
         emailGame : list[i]['emailGame'],
         wallet : list[i]['wallet'],
         dateClaim: list[i]['dateClaim'],
+        adminId: list[i]['adminId'],
+        group: await getGroup(list[i]['adminId']),
         listSlp : await getSlp(list[i]['id']),
         listAnimals : await getAnimals(list[i]['id']),
         listClaims: await getClaims(list[i]['id']),
@@ -142,6 +169,25 @@ class DBctbeca{
 
     return listPlayers;
   }
+
+  Future <Admin> getGroup(adminId) async{
+    var dbConnection = await db;
+
+    List<Map> list = await dbConnection.rawQuery('SELECT * FROM admin WHERE id = \'$adminId\' ');
+    Admin admin = new Admin();
+
+    for(int i = 0; i< list.length; i++)
+    {
+      admin = Admin(
+        id : list[i]['id'],
+        name : list[i]['name'],
+        nameGroup : list[i]['nameGroup'],
+      );
+    }
+
+    return admin;
+  }
+
 
   Future getSlp(idPlayer) async{
     var dbConnection = await db;
@@ -208,7 +254,7 @@ class DBctbeca{
         date : list[i]['date'],
         total : list[i]['total'],
         totalManager : list[i]['totalManager'],
-        totalPlayer : list[i]['totalplayer'],
+        totalPlayer : list[i]['totalPlayer'],
       );
 
       listClaims.add(claim);
@@ -216,16 +262,30 @@ class DBctbeca{
 
     return listClaims;
   }
+
+  void createOrUpdateListAdmins(List<Admin> listAdmins){
+    for (var admin in listAdmins) {
+      createOrUpdateAdmin(admin);
+    }
+  }
   
 
   void createOrUpdateAdmin(Admin admin) async{
     var dbConnection = await db;
 
-    String query = 'INSERT OR REPLACE INTO admin (id, accessToken, tokenFCM) VALUES ( (SELECT id FROM admin WHERE id = 1), \'${admin.accessToken}\', \'${admin.tokenFCM}\' )';
+    String query;
+    List<Map> list = await dbConnection.rawQuery('SELECT * FROM admin WHERE id = \'${admin.id}\' ');
+    if(list.length == 0)
+      query = 'INSERT INTO admin (id, name, nameGroup, accessToken, tokenFCM) VALUES ( \'${admin.id}\', \'${admin.name}\', \'${admin.nameGroup}\', \'${admin.accessToken}\', \'${admin.tokenFCM}\' )'; 
+    else
+      query = 'UPDATE admin SET name=\'${admin.name}\', nameGroup=\'${admin.nameGroup}\', accessToken=\'${admin.accessToken}\', tokenFCM=\'${admin.tokenFCM}\' WHERE id = \'${admin.id}\' ';
+    
     await dbConnection.transaction((transaction) async{
       return await transaction.rawInsert(query);
     });
+
   }
+  
 
   void createOrUpdateListPlayer(List<Player> listPlayers){
     for (var player in listPlayers) {
@@ -240,9 +300,9 @@ class DBctbeca{
     List<Map> list = await dbConnection.rawQuery('SELECT * FROM players WHERE id = \'${player.id}\' ');
     
     if(list.length == 0)
-      query = 'INSERT INTO players (id, email, name, phone, telegram, urlCodeQr, reference, emailGame, wallet, accessToken, tokenFCM, dateClaim) VALUES ( \'${player.id}\', \'${player.email}\', \'${player.name}\', \'${player.phone}\', \'${player.telegram}\', \'${player.urlCodeQr}\', \'${player.reference}\', \'${player.emailGame}\', \'${player.wallet}\', \'${player.accessToken}\', \'${player.tokenFCM}\', \'${player.dateClaim}\' )'; 
+      query = 'INSERT INTO players (id, email, name, phone, telegram, urlCodeQr, reference, emailGame, wallet, accessToken, tokenFCM, dateClaim, adminId) VALUES ( \'${player.id}\', \'${player.email}\', \'${player.name}\', \'${player.phone}\', \'${player.telegram}\', \'${player.urlCodeQr}\', \'${player.reference}\', \'${player.emailGame}\', \'${player.wallet}\', \'${player.accessToken}\', \'${player.tokenFCM}\', \'${player.dateClaim}\', \'${player.adminId}\' )'; 
     else
-      query = 'UPDATE players SET email=\'${player.email}\', name=\'${player.name}\', phone=\'${player.phone}\', telegram=\'${player.telegram}\', urlCodeQr=\'${player.urlCodeQr}\', reference=\'${player.reference}\', emailGame=\'${player.emailGame}\', wallet=\'${player.wallet}\', accessToken=\'${player.accessToken}\', tokenFCM=\'${player.tokenFCM}\', dateClaim=\'${player.dateClaim}\' WHERE id = \'${player.id}\' ';
+      query = 'UPDATE players SET email=\'${player.email}\', name=\'${player.name}\', phone=\'${player.phone}\', telegram=\'${player.telegram}\', urlCodeQr=\'${player.urlCodeQr}\', reference=\'${player.reference}\', emailGame=\'${player.emailGame}\', wallet=\'${player.wallet}\', accessToken=\'${player.accessToken}\', tokenFCM=\'${player.tokenFCM}\', dateClaim=\'${player.dateClaim}\', adminId=\'${player.adminId}\' WHERE id = \'${player.id}\' ';
     
     await dbConnection.transaction((transaction) async{
       return await transaction.rawInsert(query);

@@ -84,9 +84,12 @@ class LoginController extends GetxController {
           statusError.value = false;
           prefs.setString('access_token', jsonResponse['access_token']);
           prefs.setInt('type',0);
-          adminController.admin.value = new Admin.fromJson(jsonResponse);
+          adminController.admin.value = new Admin.fromJson(jsonResponse['admin']);
+          adminController.admin.value.accessToken = jsonResponse['access_token'];
           adminController.players.value = (jsonResponse['players'] as List).map((val) => Player.fromJson(val)).toList();
+          adminController.admins.value = (jsonResponse['admins'] as List).map((val) => Admin.fromJson(val)).toList();
           globalController.dbctbeca.createOrUpdateAdmin(adminController.admin.value);
+          globalController.dbctbeca.createOrUpdateListAdmins(adminController.admins);
           globalController.dbctbeca.createOrUpdateListPlayer(adminController.players);
           globalController.getPriceSLP();
           Get.back();

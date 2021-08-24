@@ -351,8 +351,8 @@ class _SlpsWidgetState extends State<SlpsWidget> {
       child: ListTile(
         selected: isSelected,
         title: Text(item.name!),
-        subtitle: Text(item.email!),
-        trailing: Text(item.telegram!),
+        subtitle: Text(item.emailGame!),
+        trailing: Text(item.group!.nameGroup!),
       ),
     );
   }
