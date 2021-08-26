@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "884492468546",
+    "project_id": "ctbeca-f6928",
+    "storage_bucket": "ctbeca-f6928.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:884492468546:android:a518f8a86f04db67e188db",
+        "android_client_info": {
+          "package_name": "com.compralotodo.ctbeca"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "884492468546-r0m8cb3dfi7auqmdl81ihekgm8uui8oq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAffEoUHC6eetHn-Kbyt1oD95WiYOGD6Ec"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "884492468546-r0m8cb3dfi7auqmdl81ihekgm8uui8oq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

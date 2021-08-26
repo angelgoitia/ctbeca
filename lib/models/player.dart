@@ -26,6 +26,7 @@ class Player{
       wallet : json['wallet'],
       dateClaim: json['dateClaim'],
       adminId: json['admin_id'],
+      tokenFCM: json['tokenFCM'],
       group: Admin.fromJson(json['group']),
       listSlp: json['total_s_l_p'] == null ? null : (json['total_s_l_p']as List).map((val) => Slp.fromJson(val)).toList(),
       listAnimals: json['animals'] == null ? null : (json['animals']as List).map((val) => Animal.fromJson(val)).toList(),

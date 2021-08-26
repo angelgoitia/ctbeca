@@ -28,6 +28,8 @@ class _AdminMainPageState extends State<AdminMainPage> with SingleTickerProvider
   @override
   void initState() {
     super.initState();
+    globalController.registerNotification(0);
+    globalController.initialNotification();
     tabController = TabController(length: 4, vsync: this);
 
     tabController!.addListener(() {

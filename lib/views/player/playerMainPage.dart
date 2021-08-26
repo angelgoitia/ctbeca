@@ -27,6 +27,8 @@ class _PlayerMainPageState extends State<PlayerMainPage> with SingleTickerProvid
   @override
   void initState() {
     super.initState();
+    globalController.registerNotification(1);
+    globalController.initialNotification();
     tabController = TabController(length: 4, vsync: this);
 
     tabController!.addListener(() {
