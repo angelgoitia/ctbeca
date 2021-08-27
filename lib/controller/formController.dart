@@ -33,6 +33,25 @@ class FormController extends GetxController {
 
   }
 
+  getSelectDropdow(index){
+    if(index >= 0){
+      var status = true;
+
+      for (var item in listGroups) {
+        if(item.name == adminController.players[index].reference){
+          status = false;
+          selectDropdowReference.value = adminController.players[index].reference!;
+        }
+      }
+
+      if(status){
+        selectDropdowReference.value = "Otro";
+        statusOtherReference.value = true;
+      }
+    }else
+      selectDropdowReference.value = "Seleccionar";
+  }
+
   validateTelegram(String value){
     value = value.trim();
     // This is just a regular expression for email addresses
@@ -99,6 +118,7 @@ class FormController extends GetxController {
             'wallet': player.value.wallet,
             'emailGame': player.value.emailGame,
             'passwordGame': player.value.passwordGame,
+            'dateClaim': player.value.dateClaim,
             'urlPrevius': index >= 0 && imageSelect.value? adminController.players[index].urlCodeQr : null,
             'image': player.value.urlCodeQr,
           }),

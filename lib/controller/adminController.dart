@@ -52,7 +52,8 @@ class AdminController extends GetxController {
         jsonResponse = jsonDecode(response.body);
 
         if (jsonResponse['statusCode'] == 201) {
-          
+          await globalController.dbctbeca.deleteAll();
+          await Future.delayed(Duration(milliseconds: 1500));
           String? accessToken = admin.value.accessToken;
           admin.value = new Admin.fromJson(jsonResponse['admin']);
           admin.value.accessToken = accessToken;

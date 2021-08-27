@@ -107,7 +107,11 @@ class _AdminMainPageState extends State<AdminMainPage> with SingleTickerProvider
                 if(globalController.indexController.value != 1){
                   adminController.getAdmin(true);
                 }
-                else
+                else if(adminController.admins.length == 0){
+                  globalController.showMessage("Debe crear un nuevo grupo desde nuestro sitio web", false); 
+                  await Future.delayed(Duration(seconds: 1));
+                  Get.back();
+                }else
                   Get.to(() => NewPlayerPage(-1), transition: Transition.zoom);
               },
               child: globalController.indexController.value == 1? Icon(Icons.add) : Icon(Icons.sync_rounded),

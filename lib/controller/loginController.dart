@@ -60,7 +60,7 @@ class LoginController extends GetxController {
     globalController.loading();
 
     try {
-      result = await InternetAddress.lookup('google.com'); //verify network
+      result = await InternetAddress.lookup('google.com'); 
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
 
         var parameters = jsonToUrl(jsonEncode({

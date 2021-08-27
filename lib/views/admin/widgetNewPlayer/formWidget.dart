@@ -14,6 +14,7 @@ import 'package:get/get.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class FormWidget extends StatefulWidget {
   final int index;
@@ -27,6 +28,8 @@ class _FormWidgetState extends State<FormWidget> {
   final int index;
   _FormWidgetState(this.index);
 
+  final DateFormat formatterBD = DateFormat('yyyy-MM-dd');
+  final DateFormat formatter = DateFormat('dd/MM/yyyy');
   final _formKeyNewPlayer = new GlobalKey<FormState>();
   final FocusNode _nameFocus = FocusNode();  
   final FocusNode _phoneFocus = FocusNode();  
@@ -37,19 +40,30 @@ class _FormWidgetState extends State<FormWidget> {
   final FocusNode _walletFocus = FocusNode();  
   final FocusNode _userFocus = FocusNode();  
   final FocusNode _emailGameFocus = FocusNode(); 
-  final FocusNode _passwordGameFocus = FocusNode();  
+  final FocusNode _passwordGameFocus = FocusNode();
+  final FocusNode _dateClaimFocus = FocusNode();  
   TextEditingController _phoneController = TextEditingController();
+  TextEditingController _otherReferenceController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+  TextEditingController _dateClaimController = TextEditingController();
+
+  DateTime? now = DateTime.now();
+  DateTime? playerDateClaim = DateTime.now();
 
   FormController formController = Get.put(FormController());
   AdminController adminController = Get.put(AdminController());
 
   @override
-  void initState() {
+  void initState()  {
     super.initState();
+    formController.getSelectDropdow(index);
     _phoneController.text = index >= 0? adminController.players[index].phone!.substring(5) : '';
-    formController.player.value.wallet  = index >= 0? adminController.players[index].wallet! : '';
-    formController.selectDropdowReference.value = index >=0? adminController.players[index].name! : "Seleccionar";
+    formController.player.value.wallet = index >= 0? adminController.players[index].wallet! : '';
+    formController.selectDropdowGroup.value = index >= 0? adminController.players[index].group! : formController.selectDropdowGroup.value;
+    _dateClaimController.text = index >=0? formatter.format(formatterBD.parse(adminController.players[index].dateClaim!)) : formatter.format(DateTime.now());
+    formController.player.value.dateClaim = index >=0? formatter.format(formatterBD.parse(adminController.players[index].dateClaim!)) : formatter.format(DateTime.now());
+    if(formController.statusOtherReference.value)
+      _otherReferenceController.text = adminController.players[index].reference!;
   }
 
   @override
@@ -397,6 +411,7 @@ class _FormWidgetState extends State<FormWidget> {
                   padding: const EdgeInsets.fromLTRB(30.0, 20.0, 30.0, 0.0),
                   child: new TextFormField(
                     maxLines: 1,
+                    controller: _otherReferenceController,
                     keyboardType: TextInputType.text,
                     textCapitalization: TextCapitalization.words,
                     inputFormatters: [
@@ -689,11 +704,8 @@ class _FormWidgetState extends State<FormWidget> {
                   ],
                   validator: (value) => value!.trim().length < 5? 'Ingrese una contraseña válida': null,
                   onSaved: (value) => formController.player.value.passwordGame = value!.trim(),
-                  textInputAction: TextInputAction.done,
-                  onFieldSubmitted: (term){
-                    FocusScope.of(context).requestFocus(new FocusNode()); 
-                    tapSubmit(index);
-                  },
+                  textInputAction: TextInputAction.next,
+                  onEditingComplete: () => FocusScope.of(context).requestFocus(_dateClaimFocus),
                   cursorColor: colorPrimary,
                   style: TextStyle(
                     fontFamily: 'MontserratSemiBold',
@@ -702,7 +714,55 @@ class _FormWidgetState extends State<FormWidget> {
                 ),
               ),
             ),  
-              SizedBox(height: 25,),
+
+            Padding(
+              padding: const EdgeInsets.fromLTRB(30.0, 20.0, 30.0, 0.0),
+              child: TextFormField(
+                readOnly: true,
+                cursorColor: colorPrimary,
+                decoration: InputDecoration(
+                  fillColor: colorPrimary,
+                  icon: new Icon(
+                    Icons.date_range,
+                    color: colorPrimary
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(25.0),
+                    borderSide: BorderSide(
+                      color: Colors.green[900]!,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(25.0),
+                    borderSide: BorderSide(
+                      color: Colors.green[900]!,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(25.0),
+                    borderSide: BorderSide(
+                      color: Colors.green[900]!,
+                    ),
+                  ),
+                  labelText: "Fecha de reclamo",
+                  labelStyle: TextStyle(
+                    color: colorPrimary,
+                    fontFamily: 'MontserratSemiBold',
+                    fontSize: 14,
+                  ),
+                ),
+                controller: _dateClaimController,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontFamily: 'MontserratSemiBold',
+                ),
+                onTap: () {
+                  _selectDate(context);
+                }
+              ),
+            ),
+
+            SizedBox(height: 25,),
             buttonSubmit(context), 
           ],
         ),
@@ -840,6 +900,36 @@ class _FormWidgetState extends State<FormWidget> {
 
       }
     }
+  }
+
+  Future<Null> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+            data: ThemeData.light().copyWith(
+              colorScheme: ColorScheme.fromSwatch(
+                primarySwatch: Colors.green,
+                primaryColorDark: Colors.green,
+                accentColor: Colors.green,
+              ),
+            dialogBackgroundColor:Colors.white,
+          ),
+          child: child!,
+        );
+      },
+      locale : const Locale("es","ES"),
+      firstDate: DateTime(2021, 1, 1),
+      lastDate: DateTime.now(),
+      initialDate: formatter.parse(formController.player.value.dateClaim!),
+      helpText: "Seleccionar una fecha de reclamo",
+    );
+
+    if (picked != null){
+      _dateClaimController.text = formatter.format(picked);
+      formController.player.value.dateClaim = formatter.format(picked);
+    } 
+
   }
 
   void tapSubmit(index){

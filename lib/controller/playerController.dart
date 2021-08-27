@@ -24,7 +24,7 @@ class PlayerController extends GetxController {
       globalController.loading();
     
     try {
-      result = await InternetAddress.lookup('google.com'); //verify network
+      result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
 
         response = await http.get(
@@ -40,7 +40,8 @@ class PlayerController extends GetxController {
         jsonResponse = jsonDecode(response.body);
 
         if (jsonResponse['statusCode'] == 201) {
-
+          await globalController.dbctbeca.deleteAll();
+          await Future.delayed(Duration(milliseconds: 1500));
           String? accessToken = player.value.accessToken;
           player.value = new Player.fromJson(jsonResponse['player']);
           player.value.accessToken = accessToken;

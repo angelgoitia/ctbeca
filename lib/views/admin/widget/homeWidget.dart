@@ -128,9 +128,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                   Text(listDate[index]),
                 ],
               ),
-              Obx(
-                () => Text(globalController.priceSLP.value == 0? 'Sin Conexión a Internet' : globalController.todayPriceSLP.value)
-              ),
+              Text(globalController.priceSLP.value == 0? 'Sin Conexión a Internet' : globalController.todayPriceSLP.value)
             ],
           ),
       ),
