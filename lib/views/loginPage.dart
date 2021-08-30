@@ -2,6 +2,7 @@ import 'package:ctbeca/controller/loginController.dart';
 import 'package:ctbeca/env.dart';
 
 import 'package:auto_size_text_pk/auto_size_text_pk.dart';
+import 'package:ctbeca/views/widget/policyPrivacy.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -44,6 +45,8 @@ class _LoginPageState extends State<LoginPage> {
                       width: size.width/2,
                     ),
                     formLogin(context), 
+                    SizedBox(height: 25,),
+                    PolicyPrivacy(),
                     SizedBox(height: 25,),
                     buttonLogin(context), 
                   ]

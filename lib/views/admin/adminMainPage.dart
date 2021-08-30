@@ -103,7 +103,7 @@ class _AdminMainPageState extends State<AdminMainPage> with SingleTickerProvider
           () => Padding(
             padding: EdgeInsets.only(bottom: 80),
             child: FloatingActionButton(
-              onPressed: () {
+              onPressed: () async {
                 if(globalController.indexController.value != 1){
                   adminController.getAdmin(true);
                 }

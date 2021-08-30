@@ -12,7 +12,7 @@ import 'dart:async';
 class DBctbeca{
 
   static Database? dbInstance;
-  static int versionDB = 2;
+  static int versionDB = 4;
 
   Future<Database> get db async{
     if(dbInstance == null)
@@ -45,8 +45,8 @@ class DBctbeca{
     await db.execute('CREATE TABLE IF NOT EXISTS admin (id INTEGER, accessToken Text, tokenFCM Text, name VARCHAR(50), nameGroup VARCHAR(50))');
     await db.execute('CREATE TABLE IF NOT EXISTS animals (id INTEGER, playerId INTEGER, name VARCHAR(50), code VARCHAR(50), type VARCHAR(50), nomenclature VARCHAR(50), image Text)');
     await db.execute('CREATE TABLE IF NOT EXISTS players (id INTEGER, name VARCHAR(50), email VARCHAR(50), phone VARCHAR(20), telegram VARCHAR(50), urlCodeQr Text, reference VARCHAR(50), emailGame VARCHAR(50), wallet Text, accessToken Text, tokenFCM Text, dateClaim VARCHAR(20), adminId INTEGER )');
-    await db.execute('CREATE TABLE IF NOT EXISTS slp (id INTEGER, playerId INTEGER, total INTEGER, daily INTEGER, createdAt VARCHAR(50), date VARCHAR(20))');
-    await db.execute('CREATE TABLE IF NOT EXISTS claims (id INTEGER, playerId INTEGER, total INTEGER, totalManager INTEGER, totalPlayer INTEGER, date VARCHAR(20))');
+    await db.execute('CREATE TABLE IF NOT EXISTS slp (id INTEGER, playerId INTEGER, total INTEGER, daily INTEGER, totalManager REAL, createdAt VARCHAR(50), date VARCHAR(20))');
+    await db.execute('CREATE TABLE IF NOT EXISTS claims (id INTEGER, playerId INTEGER, total INTEGER, totalManager REAL, totalPlayer REAL, date VARCHAR(20))');
   }
 
   /*
@@ -203,6 +203,7 @@ class DBctbeca{
         playerId : list[i]['playerId'],
         total : list[i]['total'],
         daily : list[i]['daily'],
+        totalManager : list[i]['totalManager'],
         createdAt : list[i]['createdAt'],
         date : list[i]['date'],
       );
@@ -326,9 +327,9 @@ class DBctbeca{
     List<Map> list = await dbConnection.rawQuery('SELECT * FROM slp WHERE id = \'${slp.id}\' ');
     
     if(list.length == 0)
-      query = 'INSERT INTO slp (id, playerId, total, daily, createdAt, date) VALUES ( \'${slp.id}\', \'${slp.playerId}\', \'${slp.total}\', \'${slp.daily}\', \'${slp.createdAt}\', \'${slp.date}\' )';
+      query = 'INSERT INTO slp (id, playerId, total, daily, totalManager, createdAt, date) VALUES ( \'${slp.id}\', \'${slp.playerId}\', \'${slp.total}\', \'${slp.daily}\', \'${slp.totalManager}\', \'${slp.createdAt}\', \'${slp.date}\' )';
     else
-      query = 'UPDATE slp SET playerId=\'${slp.playerId}\', total=\'${slp.total}\', daily=\'${slp.daily}\', createdAt=\'${slp.createdAt}\', date=\'${slp.date}\' WHERE id = \'${slp.id}\' ';
+      query = 'UPDATE slp SET playerId=\'${slp.playerId}\', total=\'${slp.total}\', daily=\'${slp.daily}\', totalManager=\'${slp.totalManager}\', createdAt=\'${slp.createdAt}\', date=\'${slp.date}\' WHERE id = \'${slp.id}\' ';
     
     await dbConnection.transaction((transaction) async{
       return await transaction.rawInsert(query);

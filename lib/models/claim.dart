@@ -1,6 +1,7 @@
 class Claim{
   String? date;
-  int? id, playerId, total, totalManager, totalPlayer;
+  int? id, playerId, total;
+  double? totalManager, totalPlayer;
 
   Claim({this.id, this.playerId, this.date, this.total, this.totalManager, this.totalPlayer});
 
@@ -10,8 +11,8 @@ class Claim{
       playerId : json['player_id'],
       date : json['date'],
       total : json['total'],
-      totalManager : json['totalManager'],
-      totalPlayer : json['totalPlayer'],
+      totalManager : json['totalManager'].toDouble(),
+      totalPlayer : json['totalPlayer'].toDouble(),
     );
   }
 

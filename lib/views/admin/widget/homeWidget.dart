@@ -22,8 +22,8 @@ class _HomeWidgetState extends State<HomeWidget> {
   DateTime now = new DateTime.now();
   final DateFormat formatter = DateFormat('dd/MM/yyyy');
   final lowTotalPrice = new MoneyMaskedTextController(initialValue: 0, decimalSeparator: ',', thousandSeparator: '.',  leftSymbol: '\$ ', );
-  List<MaterialColor> listColor = [Colors.orange, Colors.blue, Colors.red];
-  List<String> listDate = ["Hoy", "Ayer", "Sin Reclamar"];
+  List<MaterialColor> listColor = [Colors.orange, Colors.blue, Colors.red, Colors.purple, Colors.green, Colors.grey];
+  List<String> listDate = ["Hoy", "Ayer", "Sin Reclamar", "Global", ];
 
 
   GlobalController globalController = Get.put(GlobalController());
@@ -59,6 +59,9 @@ class _HomeWidgetState extends State<HomeWidget> {
             showWidget(0),
             showWidget(1),
             showWidget(2),
+            showWidget(3),
+            showWidget(4),
+            showWidget(5),
             showChart(),
           ]
         )
@@ -87,9 +90,8 @@ class _HomeWidgetState extends State<HomeWidget> {
               size: 30,
             ),
           ),
-          titleText: 'Total de SLP',
           title: AutoSizeText(
-            'Total de SLP',
+            index == 3? 'Total Manager': index == 4? 'Total Becado' : index == 5? 'Total Producidos' : 'Total de SLP',
             style: TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.normal,
@@ -100,7 +102,7 @@ class _HomeWidgetState extends State<HomeWidget> {
           ),
           subTitleText: index != 0? '' : "1 SLP = ${globalController.priceSLP} \$" ,
           icon: AutoSizeText(
-            showTotal(index, adminController.players).toString(),style: TextStyle(
+            showTotal(index, adminController.players).toStringAsFixed(2),style: TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.normal,
               fontFamily: 'MontserratMedium',
@@ -114,7 +116,7 @@ class _HomeWidgetState extends State<HomeWidget> {
             children: [
               Icon(Icons.calendar_today),
               SizedBox(width: 10,),
-              Text(listDate[index]),
+              Text(listDate[index >= 3? 3 : index]),
             ]
           )
         :
@@ -137,7 +139,7 @@ class _HomeWidgetState extends State<HomeWidget> {
 
   showTotal(int index, List<Player> players)
   {
-    int totalSLP = 0;
+    double totalSLP = 0;
 
     if (players.length == 0) return totalSLP;
 
@@ -174,6 +176,27 @@ class _HomeWidgetState extends State<HomeWidget> {
             if(dateBefore.isBefore(dateList) && _lastDay.isAfter(dateList)){
               totalSLP += item.daily!.toInt();
             }
+          }
+        }
+        break;
+      case 3:
+        for (var player in players) {
+          for (var item in player.listSlp!) {
+            totalSLP += item.totalManager!;
+          }
+        }
+        break;
+      case 4:
+        for (var player in players) {
+          for (var item in player.listSlp!) {
+            totalSLP += (item.daily! - item.totalManager!);
+          }
+        }
+        break;
+      case 5:
+        for (var player in players) {
+          for (var item in player.listSlp!) {
+            totalSLP += item.daily!.toInt();
           }
         }
         break;
