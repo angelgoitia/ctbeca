@@ -29,7 +29,7 @@ class _DetailsPLayerPageState extends State<DetailsPLayerPage> {
   Widget build(BuildContext context) {
     
     var size = MediaQuery.of(context).size;
-
+    
     return WillPopScope(
       onWillPop: () async => true,
       child: Scaffold(
@@ -232,11 +232,14 @@ class _DetailsPLayerPageState extends State<DetailsPLayerPage> {
                           minFontSize: 14,
                         ),
 
-                        IconButton(
-                          icon: Image.asset("assets/icons/telegram.png"), 
-                          onPressed: () => launch("https://t.me/${adminController.players[index].telegram!.replaceAll('@','')}"),
-                          tooltip: "Abrir Telegram",
-                        ),
+                         adminController.players[index].telegram![0] == "@"? 
+                          IconButton(
+                            icon: Image.asset("assets/icons/telegram.png"), 
+                            onPressed: () => launch("https://t.me/${adminController.players[index].telegram!.replaceAll('@','')}"),
+                            tooltip: "Abrir Telegram",
+                          )
+                        :
+                          Container(),
                       ],
                     )
                   ),

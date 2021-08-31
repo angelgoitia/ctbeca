@@ -18,6 +18,8 @@ class ClaimsWidget extends StatefulWidget {
 class _ClaimsWidgetState extends State<ClaimsWidget> {
   final DateFormat formatterBD = DateFormat('yyyy-MM-dd');
   final DateFormat formatter = DateFormat('dd/MM/yyyy');
+  var myGroup = AutoSizeGroup();
+
   GlobalController globalController = Get.put(GlobalController());
   AdminController adminController = Get.put(AdminController());
 
@@ -111,8 +113,9 @@ class _ClaimsWidgetState extends State<ClaimsWidget> {
                     fontWeight:  FontWeight.normal,
                     fontFamily: 'MontserratSemiBold',
                   ),
-                  minFontSize: 14,
-                  maxFontSize: 14,
+                  group: myGroup,
+                  minFontSize: 13,
+                  maxFontSize: 13,
                 ),
               ),
               Expanded(
@@ -124,8 +127,9 @@ class _ClaimsWidgetState extends State<ClaimsWidget> {
                     fontWeight:  FontWeight.normal,
                     fontFamily: 'MontserratSemiBold',
                   ),
-                  minFontSize: 14,
-                  maxFontSize: 14,
+                  group: myGroup,
+                  minFontSize: 13,
+                  maxFontSize: 13,
                 ),
               ),
               Expanded(
@@ -137,8 +141,9 @@ class _ClaimsWidgetState extends State<ClaimsWidget> {
                     fontWeight:  FontWeight.normal,
                     fontFamily: 'MontserratSemiBold',
                   ),
-                  minFontSize: 14,
-                  maxFontSize: 14,
+                  group: myGroup,
+                  minFontSize: 13,
+                  maxFontSize: 13,
                 ),
               ),
               Expanded(
@@ -150,8 +155,9 @@ class _ClaimsWidgetState extends State<ClaimsWidget> {
                     fontWeight:  FontWeight.normal,
                     fontFamily: 'MontserratSemiBold',
                   ),
-                  minFontSize: 14,
-                  maxFontSize: 14,
+                  group: myGroup,
+                  minFontSize: 13,
+                  maxFontSize: 13,
                 ),
               ),
             ],
@@ -203,8 +209,9 @@ class _ClaimsWidgetState extends State<ClaimsWidget> {
                         fontWeight:  FontWeight.normal,
                         fontFamily: 'MontserratSemiBold',
                       ),
-                      minFontSize: 14,
-                      maxFontSize: 14,
+                      group: myGroup,
+                      minFontSize: 13,
+                      maxFontSize: 13,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -218,8 +225,9 @@ class _ClaimsWidgetState extends State<ClaimsWidget> {
                             fontWeight:  FontWeight.normal,
                             fontFamily: 'MontserratSemiBold',
                           ),
-                          minFontSize: 14,
-                          maxFontSize: 14,
+                          group: myGroup,
+                          minFontSize: 13,
+                          maxFontSize: 13,
                         ),
                         Padding(
                           padding: EdgeInsets.only(left: 5),
@@ -239,8 +247,9 @@ class _ClaimsWidgetState extends State<ClaimsWidget> {
                             fontWeight:  FontWeight.normal,
                             fontFamily: 'MontserratSemiBold',
                           ),
-                          minFontSize: 14,
-                          maxFontSize: 14,
+                          group: myGroup,
+                          minFontSize: 13,
+                          maxFontSize: 13,
                         ),
                         Padding(
                           padding: EdgeInsets.only(left: 5),
@@ -260,8 +269,9 @@ class _ClaimsWidgetState extends State<ClaimsWidget> {
                             fontWeight:  FontWeight.normal,
                             fontFamily: 'MontserratSemiBold',
                           ),
-                          minFontSize: 14,
-                          maxFontSize: 14,
+                          group: myGroup,
+                          minFontSize: 13,
+                          maxFontSize: 13,
                         ),
                         Padding(
                           padding: EdgeInsets.only(left: 5),

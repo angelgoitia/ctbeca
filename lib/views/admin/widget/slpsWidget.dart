@@ -21,6 +21,7 @@ class _SlpsWidgetState extends State<SlpsWidget> {
   final DateFormat formatterBD = DateFormat('yyyy-MM-dd');
   final DateFormat formatter = DateFormat('dd/MM/yyyy');
   var controllerInitialDate = TextEditingController(), controllerFinalDate = TextEditingController();
+  var myGroup = AutoSizeGroup();
 
   GlobalController globalController = Get.put(GlobalController());
   AdminController adminController = Get.put(AdminController());
@@ -163,8 +164,9 @@ class _SlpsWidgetState extends State<SlpsWidget> {
                           fontWeight:  FontWeight.normal,
                           fontFamily: 'MontserratSemiBold',
                         ),
-                        minFontSize: 14,
-                        maxFontSize: 14,
+                        group: myGroup,
+                        minFontSize: 13,
+                        maxFontSize: 13,
                       ),
                       SizedBox(width: 5,),
                       Icon(slpController.statusOrder.value? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded, color: colorPrimary,)
@@ -181,8 +183,9 @@ class _SlpsWidgetState extends State<SlpsWidget> {
                     fontWeight:  FontWeight.normal,
                     fontFamily: 'MontserratSemiBold',
                   ),
-                  minFontSize: 14,
-                  maxFontSize: 14,
+                  group: myGroup,
+                  minFontSize: 13,
+                  maxFontSize: 13,
                 ),
               ),
               Expanded(
@@ -194,8 +197,9 @@ class _SlpsWidgetState extends State<SlpsWidget> {
                     fontWeight:  FontWeight.normal,
                     fontFamily: 'MontserratSemiBold',
                   ),
-                  minFontSize: 14,
-                  maxFontSize: 14,
+                  group: myGroup,
+                  minFontSize: 13,
+                  maxFontSize: 13,
                 ),
               ),
             ],
@@ -259,8 +263,9 @@ class _SlpsWidgetState extends State<SlpsWidget> {
                         fontWeight:  FontWeight.normal,
                         fontFamily: 'MontserratSemiBold',
                       ),
-                      minFontSize: 14,
-                      maxFontSize: 14,
+                      group: myGroup,
+                      minFontSize: 13,
+                      maxFontSize: 13,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -274,8 +279,9 @@ class _SlpsWidgetState extends State<SlpsWidget> {
                             fontWeight:  FontWeight.normal,
                             fontFamily: 'MontserratSemiBold',
                           ),
-                          minFontSize: 14,
-                          maxFontSize: 14,
+                          group: myGroup,
+                          minFontSize: 13,
+                          maxFontSize: 13,
                         ),
                         Padding(
                           padding: EdgeInsets.only(left: 5),
@@ -295,8 +301,9 @@ class _SlpsWidgetState extends State<SlpsWidget> {
                             fontWeight:  FontWeight.normal,
                             fontFamily: 'MontserratSemiBold',
                           ),
-                          minFontSize: 14,
-                          maxFontSize: 14,
+                          group: myGroup,
+                          minFontSize: 13,
+                          maxFontSize: 13,
                         ),
                         Padding(
                           padding: EdgeInsets.only(left: 5),

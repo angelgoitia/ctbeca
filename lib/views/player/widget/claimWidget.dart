@@ -15,6 +15,8 @@ class ClaimWidget extends StatefulWidget {
 class _ClaimWidgetState extends State<ClaimWidget> {
   final DateFormat formatterBD = DateFormat('yyyy-MM-dd');
   final DateFormat formatter = DateFormat('dd/MM/yyyy');
+  var myGroup = AutoSizeGroup();
+
   PlayerController playerController = Get.put(PlayerController());
 
   @override
@@ -48,21 +50,23 @@ class _ClaimWidgetState extends State<ClaimWidget> {
                       fontWeight:  FontWeight.normal,
                       fontFamily: 'MontserratSemiBold',
                     ),
-                    minFontSize: 14,
-                    maxFontSize: 14,
+                    group: myGroup,
+                    minFontSize: 13,
+                    maxFontSize: 13,
                   ),
                 ),
                 Expanded(
                   child: AutoSizeText(
-                    "Acomulado",
+                    "Acumulado",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.black87,
                       fontWeight:  FontWeight.normal,
                       fontFamily: 'MontserratSemiBold',
                     ),
-                    minFontSize: 14,
-                    maxFontSize: 14,
+                    group: myGroup,
+                    minFontSize: 13,
+                    maxFontSize: 13,
                   ),
                 ),
                 Expanded(
@@ -74,8 +78,9 @@ class _ClaimWidgetState extends State<ClaimWidget> {
                       fontWeight:  FontWeight.normal,
                       fontFamily: 'MontserratSemiBold',
                     ),
-                    minFontSize: 14,
-                    maxFontSize: 14,
+                    group: myGroup,
+                    minFontSize: 13,
+                    maxFontSize: 13,
                   ),
                 ),
                 Expanded(
@@ -87,8 +92,9 @@ class _ClaimWidgetState extends State<ClaimWidget> {
                       fontWeight:  FontWeight.normal,
                       fontFamily: 'MontserratSemiBold',
                     ),
-                    minFontSize: 14,
-                    maxFontSize: 14,
+                    group: myGroup,
+                    minFontSize: 13,
+                    maxFontSize: 13,
                   ),
                 ),
               ],
@@ -138,8 +144,9 @@ class _ClaimWidgetState extends State<ClaimWidget> {
                             fontWeight:  FontWeight.normal,
                             fontFamily: 'MontserratSemiBold',
                           ),
-                          minFontSize: 14,
-                          maxFontSize: 14,
+                          group: myGroup,
+                          minFontSize: 13,
+                          maxFontSize: 13,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -153,8 +160,9 @@ class _ClaimWidgetState extends State<ClaimWidget> {
                                 fontWeight:  FontWeight.normal,
                                 fontFamily: 'MontserratSemiBold',
                               ),
-                              minFontSize: 14,
-                              maxFontSize: 14,
+                              group: myGroup,
+                              minFontSize: 13,
+                              maxFontSize: 13,
                             ),
                             Padding(
                               padding: EdgeInsets.only(left: 5),
@@ -174,8 +182,9 @@ class _ClaimWidgetState extends State<ClaimWidget> {
                                 fontWeight:  FontWeight.normal,
                                 fontFamily: 'MontserratSemiBold',
                               ),
-                              minFontSize: 14,
-                              maxFontSize: 14,
+                              group: myGroup,
+                              minFontSize: 13,
+                              maxFontSize: 13,
                             ),
                             Padding(
                               padding: EdgeInsets.only(left: 5),
@@ -195,8 +204,9 @@ class _ClaimWidgetState extends State<ClaimWidget> {
                                 fontWeight:  FontWeight.normal,
                                 fontFamily: 'MontserratSemiBold',
                               ),
-                              minFontSize: 14,
-                              maxFontSize: 14,
+                              group: myGroup,
+                              minFontSize: 13,
+                              maxFontSize: 13,
                             ),
                             Padding(
                               padding: EdgeInsets.only(left: 5),
