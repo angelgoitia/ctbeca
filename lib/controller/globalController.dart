@@ -241,7 +241,7 @@ class GlobalController extends GetxController {
           Container(
             padding: EdgeInsets.all(5),
             child: Text(
-              _titleMessage,
+              _titleMessage.toString(),
               style: TextStyle(
                 color: Colors.black,
                 fontFamily: 'MontserratSemiBold',

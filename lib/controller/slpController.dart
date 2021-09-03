@@ -46,12 +46,16 @@ class SLpController extends GetxController {
     slpDate.value.rangeInitial = date;    
 
     if(prefs.getInt('type') == 0){
-      for (var item in adminController.players[globalController.indexSelect.toInt()].listSlp!) {
-        var dateItem = DateTime.parse(item.date!);
+      if(adminController.players.length >0)
+        for (var item in adminController.players[globalController.indexSelect.toInt()].listSlp!) {
+          var dateItem = DateTime.parse(item.date!);
 
-        if(dateItem.isBefore(slpDate.value.rangeInitial!))
-          slpDate.value.rangeInitial = dateItem;
-      } 
+          if(dateItem.isBefore(slpDate.value.rangeInitial!))
+            slpDate.value.rangeInitial = dateItem;
+        }
+      else{
+        slpDate.value.rangeInitial = DateTime.parse("2021-06-01");
+      }
     }else{
       slpDate.value.rangeInitial = DateTime.parse(playerController.player.value.listSlp![0].date!);
     }
@@ -67,14 +71,14 @@ class SLpController extends GetxController {
     listSlp.clear();
     
     if(prefs.getInt('type') == 0){
-      for (var item in adminController.players[globalController.indexSelect.toInt()].listSlp!) {
-        DateTime dateList = DateTime.parse(item.date!);
-        var firstDate = slpDate.value.selectInitial!.subtract(Duration(days:1));
-        var secondDate = slpDate.value.selectFinal!.add(Duration(days:1));
-        if(firstDate.isBefore(dateList) && secondDate.isAfter(dateList))
-          listSlp.add(item);
-      }
-
+      if(adminController.players.length >0)
+        for (var item in adminController.players[globalController.indexSelect.toInt()].listSlp!) {
+          DateTime dateList = DateTime.parse(item.date!);
+          var firstDate = slpDate.value.selectInitial!.subtract(Duration(days:1));
+          var secondDate = slpDate.value.selectFinal!.add(Duration(days:1));
+          if(firstDate.isBefore(dateList) && secondDate.isAfter(dateList))
+            listSlp.add(item);
+        }
     }else{
       for (var item in playerController.player.value.listSlp!) {
         DateTime dateList = DateTime.parse(item.date!);

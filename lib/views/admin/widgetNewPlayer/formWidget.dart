@@ -229,7 +229,7 @@ class _FormWidgetState extends State<FormWidget> {
                   padding: const EdgeInsets.fromLTRB(30.0, 5.0, 30.0, 0.0),
                   child: Center(
                     child: AutoSizeText(
-                      'Ingrese un número correcto válido',
+                      'Ingrese un número de teléfono válido',
                       style: TextStyle(
                         color: Colors.red,
                         fontFamily: 'MontserratSemiBold',
@@ -261,13 +261,13 @@ class _FormWidgetState extends State<FormWidget> {
                     fontFamily: 'MontserratSemiBold',
                     fontSize: 14,
                   ),
-                  hintText: "@JoeDoe",
+                  hintText: "@JoeDoe ó 04125555555",
                   icon: Image.asset("assets/icons/telegramBlack.png", width: 20, color: colorPrimary,),
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: colorPrimary),
                   ),
                 ),
-                validator: (value) => formController.validateTelegram(value!)? null : 'Ingrese un usuario de telegram válido',
+                validator: (value) => formController.validateTelegram(value!)? null : 'Ingrese un usuario de telegram o un número de teléfono válido',
                 onSaved: (value) => formController.player.value.telegram = value!.trim(),
                 textInputAction: TextInputAction.next ,
                 cursorColor: colorPrimary,

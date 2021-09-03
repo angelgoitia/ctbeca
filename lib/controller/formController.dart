@@ -56,9 +56,11 @@ class FormController extends GetxController {
     value = value.trim();
     // This is just a regular expression for email addresses
     String p = "[@][A-Za-z0-9_]{5,20}";
+    String regePhone = r'^(0414|0424|0412|0416|0426)[0-9]{7}$';
     RegExp regExp = new RegExp(p);
-
-    if (value.isNotEmpty && regExp.hasMatch(value)) {
+    RegExp regEx2 = new RegExp(regePhone);
+    
+    if (value.isNotEmpty && regExp.hasMatch(value) || (regEx2.hasMatch(value) && value.length >=11)) {
       return true;    
     }
 
